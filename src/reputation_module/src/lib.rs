@@ -12,12 +12,12 @@ const MAX_VALUE_SIZE: u32 = 100;
 const MAX_KEY_SIZE: u32 = 100;
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone)]
-struct ParamKey(Principal);
+struct CanisterPrincipal(Principal);
 
 #[derive(CandidType, Deserialize, Clone)]
-struct Param(bool);
+struct CanisterPermission(bool);
 
-impl Storable for ParamKey {
+impl Storable for CanisterPrincipal {
     fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
         self.0.to_bytes()
     }
@@ -32,7 +32,7 @@ impl Storable for ParamKey {
     };
 }
 
-impl Storable for Param {
+impl Storable for CanisterPermission {
     fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
         self.0.to_bytes()
     }
@@ -51,7 +51,7 @@ thread_local! {
     static MEMORY_MANAGER: RefCell<MemoryManager<DefaultMemoryImpl>> =
         RefCell::new(MemoryManager::init(DefaultMemoryImpl::default()));
 
-    static CANISTER_PERMISSIONS: RefCell<StableBTreeMap<ParamKey, Param, Memory>> = RefCell::new(
+    static ALLOWED_CANISTER: RefCell<StableBTreeMap<CanisterPrincipal, CanisterPermission, Memory>> = RefCell::new(
         StableBTreeMap::init(
             MEMORY_MANAGER.with(|m| m.borrow().get(MemoryId::new(0))),
         )
