@@ -1,3 +1,4 @@
+use candid::{Principal, CandidType, Deserialize};
 use ic_cdk::{query};
 use ic_stable_structures::memory_manager::{MemoryId, MemoryManager, VirtualMemory};
 use ic_stable_structures::{
@@ -5,7 +6,54 @@ use ic_stable_structures::{
 };
 use std::{borrow::Cow, cell::RefCell};
 
+type Memory = VirtualMemory<DefaultMemoryImpl>;
+
+const MAX_VALUE_SIZE: u32 = 100;
+const MAX_KEY_SIZE: u32 = 100;
+
+#[derive(PartialEq, Eq, PartialOrd, Ord, Clone)]
+struct ParamKey(Principal);
+
+#[derive(CandidType, Deserialize, Clone)]
+struct Param(bool);
+
+impl Storable for ParamKey {
+    fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
+        self.0.to_bytes()
+    }
+
+    fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
+        Self(Principal::from_bytes(bytes))
+    }
+
+    const BOUND: Bound = Bound::Bounded {
+        max_size: MAX_KEY_SIZE,
+        is_fixed_size: false,
+    };
+}
+
+impl Storable for Param {
+    fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
+        self.0.to_bytes()
+    }
+
+    fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
+        Self(bool::from_bytes(bytes))
+    }
+
+    const BOUND: Bound = Bound::Bounded {
+        max_size: MAX_KEY_SIZE,
+        is_fixed_size: false,
+    };
+}
+
 thread_local! {
     static MEMORY_MANAGER: RefCell<MemoryManager<DefaultMemoryImpl>> =
         RefCell::new(MemoryManager::init(DefaultMemoryImpl::default()));
+
+    static CANISTER_PERMISSIONS: RefCell<StableBTreeMap<ParamKey, Param, Memory>> = RefCell::new(
+        StableBTreeMap::init(
+            MEMORY_MANAGER.with(|m| m.borrow().get(MemoryId::new(0))),
+        )
+    );
 }
