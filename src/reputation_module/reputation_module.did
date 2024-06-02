@@ -1,0 +1,6 @@
+type Result = variant { Ok : text; Err : text };
+service : {
+  caller : () -> (principal) query;
+  changePemissionCanister : (principal, bool) -> (Result) query;
+  isController : () -> (bool) query;
+}

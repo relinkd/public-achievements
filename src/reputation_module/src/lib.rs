@@ -58,14 +58,20 @@ thread_local! {
     );
 }
 
+#[query(name = "caller")]
+fn caller() -> Principal {
+    let id = ic_cdk::api::caller();
+
+    return id;
+}
+
 #[query(name = "isController")]
-fn is_controller(id: Principal) -> bool {
+fn is_controller() -> bool {
     let id = ic_cdk::api::caller();
     let is_controller = ic_cdk::api::is_controller(&id);
 
     return is_controller;
 }
-
 
 #[query(name = "changePemissionCanister")]
 fn change_permission_canister(canister: Principal, permission: bool) -> Result<String, String> {
@@ -76,6 +82,8 @@ fn change_permission_canister(canister: Principal, permission: bool) -> Result<S
         CANISTERS_PERSMISSION.with(|p| p.borrow_mut().insert(CanisterPrincipal(canister), CanisterPermission(permission)));
         Ok(String::from("Granted permissions to canister"))
     } else {
-        Ok(String::from("Access denied"))
+        Err(String::from("Access denied"))
     }
 }
+
+ic_cdk::export_candid!();
