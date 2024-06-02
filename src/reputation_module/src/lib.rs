@@ -1,5 +1,5 @@
 use candid::{Principal, CandidType, Deserialize};
-use ic_cdk::{query};
+use ic_cdk::{query, update};
 use ic_stable_structures::memory_manager::{MemoryId, MemoryManager, VirtualMemory};
 use ic_stable_structures::{
     storable::Bound, DefaultMemoryImpl, StableBTreeMap, Storable,
@@ -73,7 +73,7 @@ fn is_controller() -> bool {
     return is_controller;
 }
 
-#[query(name = "changePemissionCanister")]
+#[update(name = "changePermissionCanister")]
 fn change_permission_canister(canister: Principal, permission: bool) -> Result<String, String> {
     let id = ic_cdk::api::caller();
     let is_controller = ic_cdk::api::is_controller(&id);
@@ -83,6 +83,15 @@ fn change_permission_canister(canister: Principal, permission: bool) -> Result<S
         Ok(String::from("Granted permissions to canister"))
     } else {
         Err(String::from("Access denied"))
+    }
+}
+
+#[query(name = "isCanisterAllowed")]
+fn is_canister_allowed(canister: Principal) -> Result<CanisterPermission, String> {
+    if let Some(permission) = CANISTERS_PERSMISSION.with(|p| p.borrow().get(&CanisterPrincipal(canister))) {
+        Ok(permission)
+    } else {
+        Err(String::from("Canister not found"))
     }
 }
 

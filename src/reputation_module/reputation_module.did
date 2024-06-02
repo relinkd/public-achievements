@@ -1,6 +1,8 @@
 type Result = variant { Ok : text; Err : text };
+type Result_1 = variant { Ok : bool; Err : text };
 service : {
   caller : () -> (principal) query;
-  changePemissionCanister : (principal, bool) -> (Result) query;
+  changePermissionCanister : (principal, bool) -> (Result);
+  isCanisterAllowed : (principal) -> (Result_1) query;
   isController : () -> (bool) query;
 }
