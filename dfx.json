@@ -5,6 +5,11 @@
       "package": "example_backend",
       "type": "rust"
     },
+    "reputation_module": {
+      "candid": "src/reputation_module/reputation_module.did",
+      "package": "reputation_module",
+      "type": "rust"
+    },
     "example_frontend": {
       "dependencies": [
         "example_backend"
