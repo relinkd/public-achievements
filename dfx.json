@@ -10,6 +10,11 @@
       "package": "reputation_module",
       "type": "rust"
     },
+    "achievement": {
+      "candid": "src/achievement/achievement.did",
+      "package": "achievement",
+      "type": "rust"
+    },
     "example_frontend": {
       "dependencies": [
         "example_backend"
