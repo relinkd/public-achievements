@@ -1,0 +1,11 @@
+type PublicKeyReply = record { public_key_hex : text };
+type Result = variant { Ok : PublicKeyReply; Err : text };
+type Result_1 = variant { Ok : SignatureReply; Err : text };
+type Result_2 = variant { Ok : SignatureVerificationReply; Err : text };
+type SignatureReply = record { signature_hex : text };
+type SignatureVerificationReply = record { is_signature_valid : bool };
+service : {
+  public_key : () -> (Result);
+  sign : (text) -> (Result_1);
+  verify : (text, text, text) -> (Result_2) query;
+}
