@@ -14,7 +14,7 @@ pub type Memory = VirtualMemory<DefaultMemoryImpl>;
 const MAX_VALUE_SIZE: u32 = 100;
 const MAX_KEY_SIZE: u32 = 100;
 
-enum AchievementStatusEnum {
+pub enum AchievementStatusEnum {
     NotAllowed,
     Allowed
 }
