@@ -33,6 +33,13 @@ thread_local! {
     );
 }
 
+#[query(name = "caller")]
+fn caller() -> Principal {
+    let id = ic_cdk::api::caller();
+
+    return id;
+}
+
 #[query(name = "checkAchievementEligibility")]
 fn check_achievement_eligibility(principal: Principal, blob: Vec<u8>) -> Result<bool, String> {
 
