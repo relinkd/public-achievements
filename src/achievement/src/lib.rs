@@ -2,7 +2,7 @@ pub mod ecdsa;
 pub mod storable;
 
 use ic_cdk::{query, update};
-use candid::{Principal, };
+use candid::{Principal};
 
 use ic_stable_structures::memory_manager::{MemoryId, MemoryManager};
 use ic_stable_structures::{
