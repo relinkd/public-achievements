@@ -48,8 +48,8 @@ fn check_achievement_eligibility(principal: Principal, blob: Vec<u8>) -> Result<
     Ok(true)
 }
 
-#[update(name = "receiveToIdentityWallet")]
-async fn receive_to_identity_wallet(identity_wallet: Principal, blob: Vec<u8>) -> Result<String, String> {
+#[update(name = "generateHashToIdentityWallet")]
+async fn generate_hash_to_identity_wallet(identity_wallet: Principal, blob: Vec<u8>) -> Result<String, String> {
     let caller = ic_cdk::api::caller();
     let eligibility = check_achievement_eligibility(caller, blob).unwrap();
 
