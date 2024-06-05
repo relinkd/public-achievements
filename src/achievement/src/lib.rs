@@ -23,7 +23,9 @@ thread_local! {
         )
     );
 
-    static HASH_FROM_PRINCIPAL_TO_IDENTITY_WALLET: RefCell<StableBTreeMap<PrincipalStorable, Signature, Memory>> = RefCell::new(
+    // HASH = HASH_FROM_PRINCIPAL_TO_IDENTITY_WALLET
+
+    static PRINCIPAL_TO_HASH: RefCell<StableBTreeMap<PrincipalStorable, Signature, Memory>> = RefCell::new(
         StableBTreeMap::init(
             MEMORY_MANAGER.with(|m| m.borrow().get(MemoryId::new(1))),
         )
