@@ -3,5 +3,6 @@ type Result_1 = variant { Ok : text; Err : text };
 service : {
   caller : () -> (principal) query;
   checkAchievementEligibility : (principal, blob) -> (Result) query;
-  receiveToIdentityWallet : (principal, blob) -> (Result_1);
+  generateHashToIdentityWallet : (principal, blob) -> (Result_1);
+  getPrincipalToHashValue : (principal) -> (Result_1) query;
 }
