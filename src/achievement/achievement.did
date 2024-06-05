@@ -1,2 +1,6 @@
 type Result = variant { Ok : bool; Err : text };
-service : { checkAchievementEligibility : (principal, blob) -> (Result) query }
+type Result_1 = variant { Ok : text; Err : text };
+service : {
+  checkAchievementEligibility : (principal, blob) -> (Result) query;
+  receiveToIdentityWallet : (principal, blob) -> (Result_1);
+}

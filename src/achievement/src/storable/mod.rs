@@ -11,8 +11,8 @@ use std::{borrow::Cow, cell::RefCell};
 
 pub type Memory = VirtualMemory<DefaultMemoryImpl>;
 
-const MAX_VALUE_SIZE: u32 = 100;
-const MAX_KEY_SIZE: u32 = 100;
+const MAX_VALUE_SIZE: u32 = 130;
+const MAX_KEY_SIZE: u32 = 130;
 
 pub enum AchievementStatusEnum {
     NotAllowed,

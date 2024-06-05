@@ -9,8 +9,8 @@ struct PublicKeyReply {
     pub public_key_hex: String,
 }
 
-#[derive(CandidType, Serialize, Debug)]
-struct SignatureReply {
+#[derive(CandidType, Serialize, Debug, Clone)]
+pub struct SignatureReply {
     pub signature_hex: String,
 }
 
@@ -75,7 +75,7 @@ async fn public_key() -> Result<PublicKeyReply, String> {
     })
 }
 
-async fn sign(message: String) -> Result<SignatureReply, String> {
+pub async fn sign(message: String) -> Result<SignatureReply, String> {
     let request = SignWithECDSA {
         message_hash: sha256(&message).to_vec(),
         derivation_path: vec![],
