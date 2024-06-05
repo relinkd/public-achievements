@@ -89,22 +89,23 @@ async fn receive_achievement_from_identity_wallet(blob: Vec<u8>) -> Result<Strin
     }
 }
 
-// #[update(name = "receiveAchievementFromIdentityWalletWithHash")]
-// async fn receive_achievement_from_identity_wallet_with_hash(principal: Principal) -> Result<String, String> {
-//     let caller = ic_cdk::api::caller();
-//     let hash = get_principal_to_hash_value(principal)?;
-//     let public_key = public_key().await?;
-//     let eligibility = verify(signature_hex, message, public_key_hex)
+#[update(name = "receiveAchievementFromIdentityWalletWithHash")]
+async fn receive_achievement_from_identity_wallet_with_hash(principal: Principal) -> Result<String, String> {
+    let caller = ic_cdk::api::caller();
+    let hash = get_principal_to_hash_value(principal)?;
+    let public_key = public_key().await?;
+    let message = build_principals_message(principal, caller);
+    let eligibility = verify(hash.0, message, public_key.public_key_hex).await?;
 
-//     if eligibility {
-//         let allowed_status = AchievementStatusEnum::Allowed;
-//         PRINCIPAL_TO_ACHIEVEMENT_STATUS.with(|p| p.borrow_mut().insert(PrincipalStorable(caller), AchievementStatus(allowed_status.to_u8())));
+    if eligibility.is_signature_valid {
+        let allowed_status = AchievementStatusEnum::Allowed;
+        PRINCIPAL_TO_ACHIEVEMENT_STATUS.with(|p| p.borrow_mut().insert(PrincipalStorable(caller), AchievementStatus(allowed_status.to_u8())));
 
-//         Ok(String::from("Achievement status changed to allowed"))
-//     } else {
-//         Err(String::from("Caller principal is not eligible"))
-//     }
-// }
+        Ok(String::from("Achievement status changed to allowed"))
+    } else {
+        Err(String::from("Principal is not eligible or hash mismatch"))
+    }
+}
 
 #[query(name = "getPrincipalToAchievementStatusValue")]
 fn get_principal_to_achievement_status_value(principal: Principal) -> Result<String, String> {

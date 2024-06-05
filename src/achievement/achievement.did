@@ -7,4 +7,5 @@ service : {
   getPrincipalToAchievementStatusValue : (principal) -> (Result_1) query;
   getPrincipalToHashValue : (principal) -> (Result_1) query;
   receiveAchievementFromIdentityWallet : (blob) -> (Result_1);
+  receiveAchievementFromIdentityWalletWithHash : (principal) -> (Result_1);
 }

@@ -6,6 +6,11 @@
 sh generate_candid.sh
 ```
 
+## Achievement test hash generate
+
+local_wallet 2vxsx-fae
+identity_wallet 2vxsx-fae
+
 If you want to start working on your project right away, you might want to try the following commands:
 
 ```bash
