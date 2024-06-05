@@ -5,7 +5,7 @@ use std::convert::TryFrom;
 use std::str::FromStr;
 
 #[derive(CandidType, Serialize, Debug)]
-struct PublicKeyReply {
+pub struct PublicKeyReply {
     pub public_key_hex: String,
 }
 
@@ -15,7 +15,7 @@ pub struct SignatureReply {
 }
 
 #[derive(CandidType, Serialize, Debug)]
-struct SignatureVerificationReply {
+pub struct SignatureVerificationReply {
     pub is_signature_valid: bool,
 }
 
@@ -58,7 +58,15 @@ enum EcdsaCurve {
     Secp256k1,
 }
 
-async fn public_key() -> Result<PublicKeyReply, String> {
+pub fn build_principals_message(caller: Principal, identity_wallet: Principal) -> String {
+    let mut message = String::from("");
+    message.push_str(&caller.to_string());
+    message.push_str(&identity_wallet.to_string());
+
+    message
+}
+
+pub async fn public_key() -> Result<PublicKeyReply, String> {
     let request = ECDSAPublicKey {
         canister_id: None,
         derivation_path: vec![],
@@ -96,7 +104,7 @@ pub async fn sign(message: String) -> Result<SignatureReply, String> {
     })
 }
 
-async fn verify(
+pub async fn verify(
     signature_hex: String,
     message: String,
     public_key_hex: String,

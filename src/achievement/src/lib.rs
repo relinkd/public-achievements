@@ -11,7 +11,7 @@ use ic_stable_structures::{
 use std::cell::RefCell;
 
 use storable::{PrincipalStorable, AchievementStatus, Memory, Signature, AchievementStatusEnum};
-use ecdsa::{sign};
+use ecdsa::{sign, public_key, verify, build_principals_message};
 
 
 thread_local! {
@@ -54,9 +54,7 @@ async fn generate_hash_to_identity_wallet(identity_wallet: Principal, blob: Vec<
     let eligibility = check_achievement_eligibility(caller, blob).unwrap();
 
     if eligibility {
-        let mut message = String::from("");
-        message.push_str(&caller.to_string());
-        message.push_str(&identity_wallet.to_string());
+        let message = build_principals_message(caller, identity_wallet);
         let signature = sign(message).await?;
 
         PRINCIPAL_TO_HASH.with(|p| p.borrow_mut().insert(PrincipalStorable(caller), Signature(signature.clone().signature_hex)));
@@ -90,6 +88,23 @@ async fn receive_achievement_from_identity_wallet(blob: Vec<u8>) -> Result<Strin
         Err(String::from("Caller principal is not eligible"))
     }
 }
+
+// #[update(name = "receiveAchievementFromIdentityWalletWithHash")]
+// async fn receive_achievement_from_identity_wallet_with_hash(principal: Principal) -> Result<String, String> {
+//     let caller = ic_cdk::api::caller();
+//     let hash = get_principal_to_hash_value(principal)?;
+//     let public_key = public_key().await?;
+//     let eligibility = verify(signature_hex, message, public_key_hex)
+
+//     if eligibility {
+//         let allowed_status = AchievementStatusEnum::Allowed;
+//         PRINCIPAL_TO_ACHIEVEMENT_STATUS.with(|p| p.borrow_mut().insert(PrincipalStorable(caller), AchievementStatus(allowed_status.to_u8())));
+
+//         Ok(String::from("Achievement status changed to allowed"))
+//     } else {
+//         Err(String::from("Caller principal is not eligible"))
+//     }
+// }
 
 #[query(name = "getPrincipalToAchievementStatusValue")]
 fn get_principal_to_achievement_status_value(principal: Principal) -> Result<String, String> {
