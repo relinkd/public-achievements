@@ -20,14 +20,14 @@ pub enum AchievementStatusEnum {
 }
 
 impl AchievementStatusEnum {
-    fn to_u8(&self) -> u8 {
+    pub fn to_u8(&self) -> u8 {
         match self {
             AchievementStatusEnum::NotAllowed => 0,
             AchievementStatusEnum::Allowed => 1,
         }
     }
 
-    fn from_u8(value: u8) -> Self {
+    pub fn from_u8(value: u8) -> Self {
         match value {
             0 => AchievementStatusEnum::NotAllowed,
             1 => AchievementStatusEnum::Allowed,

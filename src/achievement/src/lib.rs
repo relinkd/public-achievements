@@ -10,7 +10,7 @@ use ic_stable_structures::{
 };
 use std::cell::RefCell;
 
-use storable::{PrincipalStorable, AchievementStatus, Memory, Signature};
+use storable::{PrincipalStorable, AchievementStatus, Memory, Signature, AchievementStatusEnum};
 use ecdsa::{sign};
 
 
@@ -18,7 +18,7 @@ thread_local! {
     static MEMORY_MANAGER: RefCell<MemoryManager<DefaultMemoryImpl>> =
         RefCell::new(MemoryManager::init(DefaultMemoryImpl::default()));
 
-    static ACHIEVEMENT_STATUS: RefCell<StableBTreeMap<PrincipalStorable, AchievementStatus, Memory>> = RefCell::new(
+    static PRINCIPAL_TO_ACHIEVEMENT_STATUS: RefCell<StableBTreeMap<PrincipalStorable, AchievementStatus, Memory>> = RefCell::new(
         StableBTreeMap::init(
             MEMORY_MANAGER.with(|m| m.borrow().get(MemoryId::new(0))),
         )
@@ -63,7 +63,7 @@ async fn generate_hash_to_identity_wallet(identity_wallet: Principal, blob: Vec<
 
         Ok(String::from(format!("Succesfully generate hash for Identity Wallet. Signature {}", signature.signature_hex)))
     } else {
-        return Err(String::from("Caller principal is not eligible"))
+        Err(String::from("Caller principal is not eligible"))
     }
 }
 
@@ -73,6 +73,21 @@ fn get_principal_to_hash_value(principal: Principal) -> Result<Signature, String
         Ok(hash)
     } else {
         Err(String::from("Hash not found"))
+    }
+}
+
+#[update(name = "receiveAchievementFromIdentityWallet")]
+async fn receive_achievement_from_identity_wallet(blob: Vec<u8>) -> Result<String, String> {
+    let caller = ic_cdk::api::caller();
+    let eligibility = check_achievement_eligibility(caller, blob).unwrap();
+
+    if eligibility {
+        let allowed_status = AchievementStatusEnum::Allowed;
+        PRINCIPAL_TO_ACHIEVEMENT_STATUS.with(|p| p.borrow_mut().insert(PrincipalStorable(caller), AchievementStatus(allowed_status.to_u8())));
+
+        Ok(String::from("Achievement status changed to allowed"))
+    } else {
+        Err(String::from("Caller principal is not eligible"))
     }
 }
 

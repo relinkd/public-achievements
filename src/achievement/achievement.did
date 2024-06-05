@@ -5,4 +5,5 @@ service : {
   checkAchievementEligibility : (principal, blob) -> (Result) query;
   generateHashToIdentityWallet : (principal, blob) -> (Result_1);
   getPrincipalToHashValue : (principal) -> (Result_1) query;
+  receiveAchievementFromIdentityWallet : (blob) -> (Result_1);
 }
