@@ -91,4 +91,13 @@ async fn receive_achievement_from_identity_wallet(blob: Vec<u8>) -> Result<Strin
     }
 }
 
+#[query(name = "getPrincipalToAchievementStatusValue")]
+fn get_principal_to_achievement_status_value(principal: Principal) -> Result<String, String> {
+    if let Some(achievement_status) = PRINCIPAL_TO_ACHIEVEMENT_STATUS.with(|p| p.borrow().get(&PrincipalStorable(principal))) {
+        Ok(format!("Achievement status is {}", AchievementStatusEnum::to_string_from_u8(achievement_status.0)))
+    } else {
+        Err(String::from("Achievement status not found"))
+    }
+}
+
 ic_cdk::export_candid!();

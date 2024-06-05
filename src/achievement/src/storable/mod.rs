@@ -34,6 +34,14 @@ impl AchievementStatusEnum {
             _ => panic!("Invalid value for AchievementStatusEnum"),
         }
     }
+
+    pub fn to_string_from_u8(value: u8) -> String {
+        match Self::from_u8(value) {
+            AchievementStatusEnum::NotAllowed => String::from("not_allowed"),
+            AchievementStatusEnum::Allowed => String::from("allowed"),
+            _ => panic!("Invalid value for AchievementStatusEnum"),
+        }
+    }
 }
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone)]

@@ -4,6 +4,7 @@ service : {
   caller : () -> (principal) query;
   checkAchievementEligibility : (principal, blob) -> (Result) query;
   generateHashToIdentityWallet : (principal, blob) -> (Result_1);
+  getPrincipalToAchievementStatusValue : (principal) -> (Result_1) query;
   getPrincipalToHashValue : (principal) -> (Result_1) query;
   receiveAchievementFromIdentityWallet : (blob) -> (Result_1);
 }
