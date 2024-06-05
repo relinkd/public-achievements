@@ -67,4 +67,13 @@ async fn generate_hash_to_identity_wallet(identity_wallet: Principal, blob: Vec<
     }
 }
 
+#[query(name = "getPrincipalToHashValue")]
+fn get_principal_to_hash_value(principal: Principal) -> Result<Signature, String> {
+    if let Some(hash) = PRINCIPAL_TO_HASH.with(|p| p.borrow().get(&PrincipalStorable(principal))) {
+        Ok(hash)
+    } else {
+        Err(String::from("Hash not found"))
+    }
+}
+
 ic_cdk::export_candid!();
