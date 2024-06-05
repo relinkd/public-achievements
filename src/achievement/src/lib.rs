@@ -10,16 +10,22 @@ use ic_stable_structures::{
 };
 use std::cell::RefCell;
 
-use storable::{IdentityWallet, AchievementStatus, Memory};
+use storable::{PrincipalStorable, AchievementStatus, Memory, Signature};
 
 
 thread_local! {
     static MEMORY_MANAGER: RefCell<MemoryManager<DefaultMemoryImpl>> =
         RefCell::new(MemoryManager::init(DefaultMemoryImpl::default()));
 
-    static ACHIEVEMENT_STATUS: RefCell<StableBTreeMap<IdentityWallet, AchievementStatus, Memory>> = RefCell::new(
+    static ACHIEVEMENT_STATUS: RefCell<StableBTreeMap<PrincipalStorable, AchievementStatus, Memory>> = RefCell::new(
         StableBTreeMap::init(
             MEMORY_MANAGER.with(|m| m.borrow().get(MemoryId::new(0))),
+        )
+    );
+
+    static HASH_FROM_PRINCIPAL_TO_IDENTITY_WALLET: RefCell<StableBTreeMap<PrincipalStorable, Signature, Memory>> = RefCell::new(
+        StableBTreeMap::init(
+            MEMORY_MANAGER.with(|m| m.borrow().get(MemoryId::new(1))),
         )
     );
 }
@@ -31,6 +37,5 @@ fn check_achievement_eligibility(principal: Principal, blob: Vec<u8>) -> Result<
 
     Ok(true)
 }
-
 
 ic_cdk::export_candid!();

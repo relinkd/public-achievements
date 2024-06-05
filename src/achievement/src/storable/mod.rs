@@ -37,12 +37,12 @@ impl AchievementStatusEnum {
 }
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone)]
-pub struct IdentityWallet(pub Principal);
+pub struct PrincipalStorable(pub Principal);
 
 #[derive(CandidType, Deserialize, Clone)]
 pub struct AchievementStatus(pub u8);
 
-impl Storable for IdentityWallet {
+impl Storable for PrincipalStorable {
     fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
         self.0.to_bytes()
     }
@@ -64,6 +64,24 @@ impl Storable for AchievementStatus {
 
     fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
         Self(u8::from_bytes(bytes))
+    }
+
+    const BOUND: Bound = Bound::Bounded {
+        max_size: MAX_KEY_SIZE,
+        is_fixed_size: false,
+    };
+}
+
+#[derive(CandidType, Serialize, Debug)]
+pub struct Signature(pub String);
+
+impl Storable for Signature {
+    fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
+        self.0.to_bytes()
+    }
+
+    fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
+        Self(String::from_bytes(bytes))
     }
 
     const BOUND: Bound = Bound::Bounded {
