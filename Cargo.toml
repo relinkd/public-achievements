@@ -1,6 +1,5 @@
 [workspace]
 members = [
-    "src/example_backend",
     "src/reputation_module",
     "src/achievement"
 ]
