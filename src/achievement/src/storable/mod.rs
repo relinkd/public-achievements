@@ -48,7 +48,7 @@ impl AchievementStatusEnum {
 pub struct PrincipalStorable(pub Principal);
 
 #[derive(CandidType, Deserialize, Clone)]
-pub struct AchievementStatus(pub u8);
+    pub struct AchievementStatus(pub u8);
 
 impl Storable for PrincipalStorable {
     fn to_bytes(&self) -> std::borrow::Cow<[u8]> {

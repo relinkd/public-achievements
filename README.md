@@ -19,6 +19,29 @@ dfx help
 dfx canister --help
 ```
 
+## Achievement flow
+
+```bash
+dfx --identity pa_local_wallet canister call achievement checkAchievementEligibility "(principal \"zdunl-kt7k5-ob2sc-mbplm-za3de-ilig5-rmzst-vk4xc-ljb6a-mmki4-jqe\", vec {})"
+dfx --identity pa_identity_wallet canister call achievement checkAchievementEligibility "(principal \"265xa-mybwx-ttdsp-fmlbc-ooy4e-zly4z-zckoz-3ukod-5gutk-jdf4h-hae\", vec {})"
+
+dfx --identity pa_local_wallet canister call achievement generateHashToIdentityWallet "(principal \"265xa-mybwx-ttdsp-fmlbc-ooy4e-zly4z-zckoz-3ukod-5gutk-jdf4h-hae\", vec {})"
+ 
+(
+  variant {
+    Ok = "Succesfully generate hash for Identity Wallet. Signature 3091a23ffdc93967debb655fadc1926be866e611be7c4051e25b500699012718175c3975a80c7d6b1b5f7c20f88ff8922261e30f98d315e8dc45b61ef006e9fd"
+  },
+)
+
+dfx --identity pa_identity_wallet canister call achievement receiveAchievementFromIdentityWalletWithHash "(principal \"zdunl-kt7k5-ob2sc-mbplm-za3de-ilig5-rmzst-vk4xc-ljb6a-mmki4-jqe\")"
+ 
+(variant { Ok = "Achievement status changed to allowed" })
+
+dfx --identity pa_identity_wallet canister call achievement receiveAchievementFromIdentityWallet "(vec {})"
+ 
+(variant { Ok = "Achievement status changed to allowed" })
+```
+
 ## Running the project locally
 
 If you want to test your project locally, you can use the following commands:
