@@ -66,6 +66,11 @@ fn is_canister_allowed(canister: Principal) -> Result<CanisterPermission, String
     }
 }
 
+fn issue_achievement() -> Result<(), String> {
+    // your logic to issue achievement
+    Ok(())
+}
+
 #[query(name = "issueAchievementToIdentityWallet")]
 async fn issue_achievement_to_identity_wallet(achievement: Principal) -> Result<String, String> {
     let canister_permission = is_canister_allowed(achievement)?;
@@ -78,7 +83,7 @@ async fn issue_achievement_to_identity_wallet(achievement: Principal) -> Result<
     let status: (u8, ) = ic_cdk::call(achievement, "getPrincipalToAchievementStatusValue", (caller,)).await.unwrap();
 
     if status.0 == 1_u8 {
-        // your logic to issue achievement
+        issue_achievement();
         Ok(String::from("Achievement issued"))
     } else {
         Err(String::from("You`re not allowed"))
