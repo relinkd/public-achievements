@@ -1,10 +1,11 @@
 type Result = variant { Ok : bool; Err : text };
 type Result_1 = variant { Ok : text; Err : text };
+type Result_2 = variant { Ok : nat8; Err : text };
 service : {
   caller : () -> (principal) query;
   checkAchievementEligibility : (principal, blob) -> (Result) query;
   generateHashToIdentityWallet : (principal, blob) -> (Result_1);
-  getPrincipalToAchievementStatusValue : (principal) -> (Result_1) query;
+  getPrincipalToAchievementStatusValue : (principal) -> (Result_2) query;
   getPrincipalToHashValue : (principal) -> (Result_1) query;
   receiveAchievementFromIdentityWallet : (blob) -> (Result_1);
   receiveAchievementFromIdentityWalletWithHash : (principal) -> (Result_1);

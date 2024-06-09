@@ -1,6 +1,6 @@
 pub mod storable;
 
-use candid::Principal;
+use candid::{Principal};
 use ic_cdk::{query, update};
 use ic_stable_structures::memory_manager::{MemoryId, MemoryManager};
 use ic_stable_structures::{
@@ -25,8 +25,6 @@ thread_local! {
             MEMORY_MANAGER.with(|a| a.borrow().get(MemoryId::new(1))),
         ).unwrap()
     );
-
-    static COUNTER: RefCell<u64> = RefCell::new(0_u64);
 }
 
 #[query(name = "caller")]
@@ -71,7 +69,7 @@ fn issue_achievement() -> Result<(), String> {
     Ok(())
 }
 
-#[query(name = "issueAchievementToIdentityWallet")]
+#[update(name = "issueAchievementToIdentityWallet")]
 async fn issue_achievement_to_identity_wallet(achievement: Principal) -> Result<String, String> {
     let canister_permission = is_canister_allowed(achievement)?;
 
@@ -80,9 +78,9 @@ async fn issue_achievement_to_identity_wallet(achievement: Principal) -> Result<
     }
 
     let caller = ic_cdk::api::caller();
-    let status: (u8, ) = ic_cdk::call(achievement, "getPrincipalToAchievementStatusValue", (caller,)).await.unwrap();
+    let status: (Result<u8, String>, ) = ic_cdk::call(achievement, "getPrincipalToAchievementStatusValue", (caller,)).await.unwrap();
 
-    if status.0 == 1_u8 {
+    if status.0? == 1_u8 {
         issue_achievement();
         Ok(String::from("Achievement issued"))
     } else {

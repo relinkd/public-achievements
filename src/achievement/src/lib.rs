@@ -108,9 +108,9 @@ async fn receive_achievement_from_identity_wallet_with_hash(principal: Principal
 }
 
 #[query(name = "getPrincipalToAchievementStatusValue")]
-fn get_principal_to_achievement_status_value(principal: Principal) -> Result<String, String> {
+fn get_principal_to_achievement_status_value(principal: Principal) -> Result<u8, String> {
     if let Some(achievement_status) = PRINCIPAL_TO_ACHIEVEMENT_STATUS.with(|p| p.borrow().get(&PrincipalStorable(principal))) {
-        Ok(format!("Achievement status is {}", AchievementStatusEnum::to_string_from_u8(achievement_status.0)))
+        Ok(achievement_status.0)
     } else {
         Err(String::from("Achievement status not found"))
     }
