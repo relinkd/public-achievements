@@ -16,6 +16,8 @@ dfx identity new pa_identity_wallet
 dfx identity list
 ```
 
+---
+
 ### Scenario 1. Get achievement from local_wallet to identity_wallet
 
 ![scenario1](images/scenario1.png)
@@ -54,6 +56,7 @@ dfx --identity pa_identity_wallet canister call reputation_module issueAchieveme
 (variant { Ok = "Achievement issued" })
 ```
 
+---
 
 ### Scenario 2. Receive achievement directly from identity_wallet
 
@@ -80,6 +83,8 @@ dfx --identity pa_identity_wallet canister call reputation_module issueAchieveme
 
 (variant { Ok = "Achievement issued" })
 ```
+
+---
 
 ### Additional information 
 
