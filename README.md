@@ -1,4 +1,4 @@
-# Public-achievement
+# Public Achievements
 
 ## Generate candid for canisters
 
@@ -6,77 +6,83 @@
 sh generate_candid.sh
 ```
 
-## Achievement test hash generate
+## Achievement flow 
 
-local_wallet 2vxsx-fae
-identity_wallet 2vxsx-fae
-
-If you want to start working on your project right away, you might want to try the following commands:
+### init identities
 
 ```bash
-cd example/
-dfx help
-dfx canister --help
+dfx identity new pa_local_wallet
+dfx identity new pa_identity_wallet
+dfx identity list
 ```
 
-## Achievement flow
+### Scenario 1. Get achievement from local_wallet to identity_wallet
+
+![scenario1](images/scenario1.png)
+
+**Generate hash to identity wallet**
+
+Call the generateHashToIdentityWallet method in the Achievement canister from the local wallet and pass the identity wallet to which the achievement will be transferred in the arguments.
 
 ```bash
-dfx --identity pa_local_wallet canister call achievement checkAchievementEligibility "(principal \"zdunl-kt7k5-ob2sc-mbplm-za3de-ilig5-rmzst-vk4xc-ljb6a-mmki4-jqe\", vec {})"
-dfx --identity pa_identity_wallet canister call achievement checkAchievementEligibility "(principal \"265xa-mybwx-ttdsp-fmlbc-ooy4e-zly4z-zckoz-3ukod-5gutk-jdf4h-hae\", vec {})"
+dfx --identity pa_local_wallet canister call achievement generateHashToIdentityWallet "(principal \"$(dfx --identity pa_identity_wallet identity get-principal)\", vec {})"
 
-dfx --identity pa_local_wallet canister call achievement generateHashToIdentityWallet "(principal \"265xa-mybwx-ttdsp-fmlbc-ooy4e-zly4z-zckoz-3ukod-5gutk-jdf4h-hae\", vec {})"
- 
 (
   variant {
-    Ok = "Succesfully generate hash for Identity Wallet. Signature 3091a23ffdc93967debb655fadc1926be866e611be7c4051e25b500699012718175c3975a80c7d6b1b5f7c20f88ff8922261e30f98d315e8dc45b61ef006e9fd"
+    Ok = "Succesfully generate hash for Identity Wallet. Signature 5ac9cae0bd534ee09eea7bf9ddd85a53ba13efe9a416fb13155b46fa2af2f3f0671b2b79c534a29ade73811098cb947ccbd606b935aa1e0610093eac3b3ddc00"
   },
 )
+```
 
-dfx --identity pa_identity_wallet canister call achievement receiveAchievementFromIdentityWalletWithHash "(principal \"zdunl-kt7k5-ob2sc-mbplm-za3de-ilig5-rmzst-vk4xc-ljb6a-mmki4-jqe\")"
- 
+**Get allowed status from identity wallet with hash**
+
+Call receiveAchievementFromIdentityWalletWithHash method in the Achievement canister from the identity wallet. Use the address of the local wallet, which performed this action, as an argument. The function checks the hash match and if everything is fine, it changes the status of the identity wallet's achievement to Allowed.
+
+```bash
+dfx --identity pa_identity_wallet canister call achievement receiveAchievementFromIdentityWalletWithHash "(principal \"$(dfx --identity pa_local_wallet identity get-principal)\")"
+
 (variant { Ok = "Achievement status changed to allowed" })
+```
 
+**Receiving an achievement from identity wallet**
+
+Call issueAchievementToIdentityWallet method in the ReputationModule canister with the identity wallet (if the interface is present, this function is called from the hub). As an argument, we pass the address of the Achievement canister and if the function confirms that within the Achievement canister the status of the identity wallet is Allowed, it issues an achievement in the format supported by the ReputationModule.
+
+```bash
+dfx --identity pa_identity_wallet canister call reputation_module issueAchievementToIdentityWallet "(principal \"$(dfx canister id achievement)\")"
+
+(variant { Ok = "Achievement issued" })
+```
+
+
+### Scenario 2. Receive achievement directly from identity_wallet
+
+![scenario2](images/scenario2.png)
+
+Suitable for people who do not use Internet Identity but use wallets such as Plug and use one address in all applications.
+
+**Get allowed status from identity wallet**
+
+Call the receiveAchievementFromIdentityWallet method, if the identity wallet meets the conditions for receiving an achievement, then the achievement status changes to allowed.
+
+```bash
 dfx --identity pa_identity_wallet canister call achievement receiveAchievementFromIdentityWallet "(vec {})"
- 
+
 (variant { Ok = "Achievement status changed to allowed" })
 ```
 
-## Running the project locally
+**Receiving an achievement from identity wallet**
 
-If you want to test your project locally, you can use the following commands:
-
-```bash
-# Starts the replica, running in the background
-dfx start --background
-
-# Deploys your canisters to the replica and generates your candid interface
-dfx deploy
-```
-
-Once the job completes, your application will be available at `http://localhost:4943?canisterId={asset_canister_id}`.
-
-If you have made changes to your backend canister, you can generate a new candid interface with
+Call issueAchievementToIdentityWallet method in the ReputationModule canister with the identity wallet (if there is an interface, this function is called from the hub). As an argument, we pass the address of the Achievement canister, and if the function confirms that the status of the identity wallet inside the Achievement canister is Allowed, it issues an achievement in the format supported by ReputationModule.
 
 ```bash
-npm run generate
+dfx --identity pa_identity_wallet canister call reputation_module issueAchievementToIdentityWallet "(principal \"$(dfx canister id achievement)\")"
+
+(variant { Ok = "Achievement issued" })
 ```
 
-at any time. This is recommended before starting the frontend development server, and will be run automatically any time you run `dfx deploy`.
+### Additional information 
 
-If you are making frontend changes, you can start a development server with
+**Method** `checkAchievementEligibility`
 
-```bash
-npm start
-```
-
-Which will start a server at `http://localhost:8080`, proxying API requests to the replica at port 4943.
-
-### Note on frontend environment variables
-
-If you are hosting frontend code somewhere without using DFX, you may need to make one of the following adjustments to ensure your project does not fetch the root key in production:
-
-- set`DFX_NETWORK` to `ic` if you are using Webpack
-- use your own preferred method to replace `process.env.DFX_NETWORK` in the autogenerated declarations
-  - Setting `canisters -> {asset_canister_id} -> declarations -> env_override to a string` in `dfx.json` will replace `process.env.DFX_NETWORK` with the string in the autogenerated declarations
-- Write your own `createActor` constructor
+Blob - accepts additional parameters encoded in bytes, for example, an additional Metamask signature. If the function does not use this argument, an empty byte array is passed.
