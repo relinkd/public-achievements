@@ -38,7 +38,7 @@ dfx --identity pa_local_wallet canister call achievement generateHashToIdentityW
 
 **Get allowed status from identity wallet with hash**
 
-Call receiveAchievementFromIdentityWalletWithHash method in the Achievement canister from the identity wallet. Use the address of the local wallet, which performed this action, as an argument. The function checks the hash match and if everything is fine, it changes the status of the identity wallet's achievement to Allowed.
+Call receiveAchievementFromIdentityWalletWithHash method in the Achievement canister from the identity wallet. Use the address of the local wallet, which performed this action, as an argument. The function checks the hash match and if everything is fine, it changes the status of the identity wallet's achievement to **'allowed'**.
 
 ```bash
 dfx --identity pa_identity_wallet canister call achievement receiveAchievementFromIdentityWalletWithHash "(principal \"$(dfx --identity pa_local_wallet identity get-principal)\")"
@@ -48,7 +48,7 @@ dfx --identity pa_identity_wallet canister call achievement receiveAchievementFr
 
 **Receiving an achievement from identity wallet**
 
-Call issueAchievementToIdentityWallet method in the ReputationModule canister with the identity wallet (if the interface is present, this function is called from the hub). As an argument, we pass the address of the Achievement canister and if the function confirms that within the Achievement canister the status of the identity wallet is Allowed, it issues an achievement in the format supported by the ReputationModule.
+Call issueAchievementToIdentityWallet method in the ReputationModule canister with the identity wallet (if the interface is present, this function is called from the hub). As an argument, we pass the address of the Achievement canister and if the function confirms that within the Achievement canister the status of the identity wallet is **'allowed'**, it issues an achievement in the format supported by the ReputationModule.
 
 ```bash
 dfx --identity pa_identity_wallet canister call reputation_module issueAchievementToIdentityWallet "(principal \"$(dfx canister id achievement)\")"
