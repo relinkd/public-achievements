@@ -66,7 +66,7 @@ Suitable for people who do not use Internet Identity but use wallets such as Plu
 
 **Get allowed status from identity wallet**
 
-Call the receiveAchievementFromIdentityWallet method, if the identity wallet meets the conditions for receiving an achievement, then the achievement status changes to allowed.
+Call the receiveAchievementFromIdentityWallet method, if the identity wallet meets the conditions for receiving an achievement, then the achievement status changes to **'allowed'**.
 
 ```bash
 dfx --identity pa_identity_wallet canister call achievement receiveAchievementFromIdentityWallet "(vec {})"
@@ -76,7 +76,7 @@ dfx --identity pa_identity_wallet canister call achievement receiveAchievementFr
 
 **Receiving an achievement from identity wallet**
 
-Call issueAchievementToIdentityWallet method in the ReputationModule canister with the identity wallet (if there is an interface, this function is called from the hub). As an argument, we pass the address of the Achievement canister, and if the function confirms that the status of the identity wallet inside the Achievement canister is Allowed, it issues an achievement in the format supported by ReputationModule.
+Call issueAchievementToIdentityWallet method in the ReputationModule canister with the identity wallet (if there is an interface, this function is called from the hub). As an argument, we pass the address of the Achievement canister, and if the function confirms that the status of the identity wallet inside the Achievement canister is **'allowed'**, it issues an achievement in the format supported by ReputationModule.
 
 ```bash
 dfx --identity pa_identity_wallet canister call reputation_module issueAchievementToIdentityWallet "(principal \"$(dfx canister id achievement)\")"
