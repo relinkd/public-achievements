@@ -1,8 +1,9 @@
-use candid::{Principal, CandidType, Deserialize};
+use candid::{Principal, CandidType, Deserialize, Encode, Decode};
 use ic_stable_structures::memory_manager::VirtualMemory;
 use ic_stable_structures::{
     storable::Bound, DefaultMemoryImpl, Storable,
 };
+use std::borrow::Cow;
 
 pub type Memory = VirtualMemory<DefaultMemoryImpl>;
 
@@ -14,6 +15,13 @@ pub struct CanisterPrincipal(pub Principal);
 
 #[derive(CandidType, Deserialize, Clone)]
 pub struct CanisterPermission(pub bool);
+
+#[derive(CandidType, Deserialize, Clone)]
+pub struct ReputationModuleMetadata {
+    achievement_canister: Principal,
+    issuer_name: String,
+    issuer_description: String   
+}
 
 impl Storable for CanisterPrincipal {
     fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
@@ -30,6 +38,30 @@ impl Storable for CanisterPrincipal {
     };
 }
 
+impl ReputationModuleMetadata {
+    pub fn default() -> Self {
+        Self {
+            achievement_canister: Principal::anonymous(),
+            issuer_description: String::default(),
+            issuer_name: String::default()
+        }   
+    }
+}
+
+impl Storable for ReputationModuleMetadata {
+    fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
+        Cow::Owned(Encode!(self).unwrap())
+    }
+
+    fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
+        Decode!(bytes.as_ref(), Self).unwrap()
+    }
+
+    const BOUND: Bound = Bound::Bounded {
+        max_size: MAX_VALUE_SIZE,
+        is_fixed_size: false,
+    };
+}
 impl Storable for CanisterPermission {
     fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
         self.0.to_bytes()

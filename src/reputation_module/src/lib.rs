@@ -4,11 +4,11 @@ use candid::{Principal};
 use ic_cdk::{query, update};
 use ic_stable_structures::memory_manager::{MemoryId, MemoryManager};
 use ic_stable_structures::{
-    DefaultMemoryImpl, StableBTreeMap, StableVec
+    DefaultMemoryImpl, StableBTreeMap, StableVec, StableCell
 };
 use std::cell::RefCell;
 
-use storable::{Memory, CanisterPermission, CanisterPrincipal};
+use storable::{Memory, CanisterPermission, CanisterPrincipal, ReputationModuleMetadata};
 
 thread_local! {
     static MEMORY_MANAGER: RefCell<MemoryManager<DefaultMemoryImpl>> =
@@ -18,6 +18,12 @@ thread_local! {
         StableBTreeMap::init(
             MEMORY_MANAGER.with(|m| m.borrow().get(MemoryId::new(0))),
         )
+    );
+
+    static METADATA: RefCell<StableCell<ReputationModuleMetadata, Memory>> = RefCell::new(
+        StableCell::init(
+            MEMORY_MANAGER.with(|m| m.borrow().get(MemoryId::new(2))), ReputationModuleMetadata::default(),
+        ).unwrap()
     );
 
     static ACHIEVEMENTS: RefCell<StableVec<CanisterPrincipal, Memory>> = RefCell::new(
@@ -67,6 +73,28 @@ fn is_canister_allowed(canister: Principal) -> Result<CanisterPermission, String
 fn issue_achievement() -> Result<(), String> {
     // your logic to issue achievement
     Ok(())
+}
+
+#[update(name = "updateReputationModuleMetadata")]
+fn update_reputation_canister_metadata(metadata: ReputationModuleMetadata) -> Result<ReputationModuleMetadata, String> {
+    if(!is_controller()) {
+        return Err(String::from("Access denied"));
+    }
+
+    Ok(METADATA.with(|m| {
+        let mut metadata_module = m.borrow_mut();
+        metadata_module.set(metadata)
+    }).unwrap_or_else(|err| {
+        ic_cdk::trap(&format!("{:?}", err))
+    }))
+}
+
+#[query(name = "getReputationModuleMetadata")]
+fn get_reputation_module_metadata() -> ReputationModuleMetadata {
+    METADATA.with(|m| {
+        let metadata = m.borrow();
+        metadata.get().clone()
+    })
 }
 
 #[update(name = "issueAchievementToIdentityWallet")]

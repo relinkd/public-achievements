@@ -1,9 +1,17 @@
+type ReputationModuleMetadata = record {
+  achievement_canister : principal;
+  issuer_name : text;
+  issuer_description : text;
+};
 type Result = variant { Ok : text; Err : text };
 type Result_1 = variant { Ok : bool; Err : text };
+type Result_2 = variant { Ok : ReputationModuleMetadata; Err : text };
 service : {
   caller : () -> (principal) query;
   changePermissionCanister : (principal, bool) -> (Result);
+  getReputationModuleMetadata : () -> (ReputationModuleMetadata) query;
   isCanisterAllowed : (principal) -> (Result_1) query;
   isController : () -> (bool) query;
   issueAchievementToIdentityWallet : (principal) -> (Result);
+  updateReputationModuleMetadata : (ReputationModuleMetadata) -> (Result_2);
 }

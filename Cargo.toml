@@ -1,7 +1,6 @@
 [workspace]
 members = [
     "src/reputation_module",
-    "src/achievement",
-    "src/achievement_collection"
+    "src/achievement"
 ]
 resolver = "2"
