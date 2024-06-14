@@ -6,11 +6,11 @@ use candid::{Principal};
 
 use ic_stable_structures::memory_manager::{MemoryId, MemoryManager};
 use ic_stable_structures::{
-    DefaultMemoryImpl, StableBTreeMap
+    DefaultMemoryImpl, StableBTreeMap, StableVec, StableCell
 };
 use std::cell::RefCell;
 
-use storable::{PrincipalStorable, AchievementStatus, Memory, Signature, AchievementStatusEnum};
+use storable::{PrincipalStorable, AchievementStatus, Memory, Signature, AchievementStatusEnum, AchievementMetadata};
 use ecdsa::{sign, public_key, verify, build_principals_message};
 
 
@@ -24,13 +24,51 @@ thread_local! {
         )
     );
 
-    // HASH = HASH_FROM_PRINCIPAL_TO_IDENTITY_WALLET
+    static METADATA: RefCell<StableCell<AchievementMetadata, Memory>> = RefCell::new(
+        StableCell::init(
+            MEMORY_MANAGER.with(|m| m.borrow().get(MemoryId::new(2))), AchievementMetadata::default(),
+        ).unwrap()
+    );
 
     static PRINCIPAL_TO_HASH: RefCell<StableBTreeMap<PrincipalStorable, Signature, Memory>> = RefCell::new(
         StableBTreeMap::init(
             MEMORY_MANAGER.with(|m| m.borrow().get(MemoryId::new(1))),
         )
     );
+}
+
+#[query(name = "isController")]
+fn is_controller() -> bool {
+    let id = ic_cdk::api::caller();
+    let is_controller = ic_cdk::api::is_controller(&id);
+
+    return is_controller;
+}
+
+
+fn _update_canister_metadata(metadata: AchievementMetadata) -> Result<AchievementMetadata, String> {
+    Ok(METADATA.with(|m| {
+        let mut metadata_module = m.borrow_mut();
+        metadata_module.set(metadata)
+    }).unwrap_or_else(|err| {
+        ic_cdk::trap(&format!("{:?}", err))
+    }))
+}
+
+#[update(name = "updateAchivementMetadata")]
+fn update_reputation_canister_metadata(metadata: AchievementMetadata) -> Result<AchievementMetadata, String> {
+    if(!is_controller()) {
+        return Err(String::from("Access denied"));
+    }
+    _update_canister_metadata(metadata)
+}
+
+#[query(name = "getAchievementMetadata")]
+fn get_reputation_module_metadata() -> AchievementMetadata {
+    METADATA.with(|m| {
+        let metadata = m.borrow();
+        metadata.get().clone()
+    })
 }
 
 #[query(name = "caller")]

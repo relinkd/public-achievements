@@ -1,7 +1,4 @@
-use std::convert::TryFrom;
-use std::str::FromStr;
-
-use candid::{CandidType, Principal};
+use candid::{CandidType, Principal, Encode, Decode};
 use serde::{Deserialize, Serialize};
 use ic_stable_structures::memory_manager::{MemoryId, MemoryManager, VirtualMemory};
 use ic_stable_structures::{
@@ -17,6 +14,36 @@ const MAX_KEY_SIZE: u32 = 130;
 pub enum AchievementStatusEnum {
     NotAllowed,
     Allowed
+}
+
+#[derive(CandidType, Deserialize, Clone)]
+pub struct AchievementMetadata {
+    pub achievement_name: String,
+    pub achievement_description: String
+}
+
+impl AchievementMetadata {
+    pub fn default() -> Self {
+        Self {
+            achievement_description: String::default(),
+            achievement_name: String::default()
+        }   
+    }
+}
+
+impl Storable for AchievementMetadata {
+    fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
+        Cow::Owned(Encode!(self).unwrap())
+    }
+
+    fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
+        Decode!(bytes.as_ref(), Self).unwrap()
+    }
+
+    const BOUND: Bound = Bound::Bounded {
+        max_size: MAX_VALUE_SIZE,
+        is_fixed_size: false,
+    };
 }
 
 impl AchievementStatusEnum {
