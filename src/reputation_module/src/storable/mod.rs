@@ -18,7 +18,7 @@ pub struct CanisterPermission(pub bool);
 
 #[derive(CandidType, Deserialize, Clone)]
 pub struct ReputationModuleMetadata {
-    pub achievement_canister: Principal,
+    pub achievement_collection: Principal,
     pub issuer_name: String,
     pub issuer_description: String,
     pub total_issued: u128
@@ -42,7 +42,7 @@ impl Storable for CanisterPrincipal {
 impl ReputationModuleMetadata {
     pub fn default() -> Self {
         Self {
-            achievement_canister: Principal::anonymous(),
+            achievement_collection: Principal::anonymous(),
             issuer_description: String::default(),
             issuer_name: String::default(),
             total_issued: u128::default()

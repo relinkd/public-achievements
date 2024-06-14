@@ -80,7 +80,7 @@ async fn issue_achievement(principal: Principal) -> Result<MintResult, String> {
         metadata.get().clone()
     });
 
-    let mint_result: (MintResult, ) = ic_cdk::call(reputation_metadata.achievement_canister, "icrc7_mint", (MintArg {
+    let mint_result: (MintResult, ) = ic_cdk::call(reputation_metadata.achievement_collection, "icrc7_mint", (MintArg {
         from_subaccount: None,
         token_id: reputation_metadata.total_issued + 1,
         token_logo: None,
@@ -93,7 +93,27 @@ async fn issue_achievement(principal: Principal) -> Result<MintResult, String> {
         }
     },)).await.unwrap();
 
+    increment_total_issued()?;
+
     Ok(mint_result.0)
+}
+
+fn increment_total_issued() -> Result<(), String> {
+    let mut reputation_module_metadata = get_reputation_module_metadata();
+    reputation_module_metadata.total_issued += 1;
+
+    _update_canister_metadata(reputation_module_metadata)?;
+
+    Ok(())
+}
+
+fn _update_canister_metadata(metadata: ReputationModuleMetadata) -> Result<ReputationModuleMetadata, String> {
+    Ok(METADATA.with(|m| {
+        let mut metadata_module = m.borrow_mut();
+        metadata_module.set(metadata)
+    }).unwrap_or_else(|err| {
+        ic_cdk::trap(&format!("{:?}", err))
+    }))
 }
 
 #[update(name = "updateReputationModuleMetadata")]
@@ -101,13 +121,7 @@ fn update_reputation_canister_metadata(metadata: ReputationModuleMetadata) -> Re
     if(!is_controller()) {
         return Err(String::from("Access denied"));
     }
-
-    Ok(METADATA.with(|m| {
-        let mut metadata_module = m.borrow_mut();
-        metadata_module.set(metadata)
-    }).unwrap_or_else(|err| {
-        ic_cdk::trap(&format!("{:?}", err))
-    }))
+    _update_canister_metadata(metadata)
 }
 
 #[query(name = "getReputationModuleMetadata")]
