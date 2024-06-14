@@ -7,9 +7,12 @@ use ic_stable_structures::memory_manager::{MemoryId, MemoryManager};
 use ic_stable_structures::{
     DefaultMemoryImpl, StableBTreeMap, StableVec, StableCell
 };
+use icrc_ledger_types::icrc1::account::Account;
 use std::cell::RefCell;
 
 use storable::{Memory, CanisterPermission, CanisterPrincipal, ReputationModuleMetadata};
+
+use icrc_7::types::{MintArg, MintResult};
 
 thread_local! {
     static MEMORY_MANAGER: RefCell<MemoryManager<DefaultMemoryImpl>> =
@@ -71,15 +74,26 @@ fn is_canister_allowed(canister: Principal) -> Result<CanisterPermission, String
     }
 }
 
-async fn issue_achievement() -> Result<(), String> {
+async fn issue_achievement(principal: Principal) -> Result<MintResult, String> {
     let reputation_metadata = METADATA.with(|m| {
         let metadata = m.borrow();
         metadata.get().clone()
     });
 
-    // let status: (Result<u8, String>, ) = ic_cdk::call(reputation_metadata.achievement_canister, "mintDip721", (caller,)).await.unwrap();
+    let mint_result: (MintResult, ) = ic_cdk::call(reputation_metadata.achievement_canister, "icrc7_mint", (MintArg {
+        from_subaccount: None,
+        token_id: reputation_metadata.total_issued + 1,
+        token_logo: None,
+        token_name: None,
+        memo: None,
+        token_description: Some(String::from("Minted Achievement")),
+        to: Account {
+            owner: principal,
+            subaccount: None
+        }
+    },)).await.unwrap();
 
-    Ok(())
+    Ok(mint_result.0)
 }
 
 #[update(name = "updateReputationModuleMetadata")]
@@ -116,8 +130,7 @@ async fn issue_achievement_to_identity_wallet(achievement: Principal) -> Result<
     let status: (Result<u8, String>, ) = ic_cdk::call(achievement, "getPrincipalToAchievementStatusValue", (caller,)).await.unwrap();
 
     if status.0? == 1_u8 {
-        issue_achievement();
-        Ok(String::from("Achievement issued"))
+        Ok(format!("{:?}", issue_achievement(caller).await?))
     } else {
         Err(String::from("You`re not allowed"))
     }

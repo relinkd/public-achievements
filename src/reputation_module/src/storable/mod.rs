@@ -20,7 +20,8 @@ pub struct CanisterPermission(pub bool);
 pub struct ReputationModuleMetadata {
     pub achievement_canister: Principal,
     pub issuer_name: String,
-    pub issuer_description: String   
+    pub issuer_description: String,
+    pub total_issued: u128
 }
 
 impl Storable for CanisterPrincipal {
@@ -43,7 +44,8 @@ impl ReputationModuleMetadata {
         Self {
             achievement_canister: Principal::anonymous(),
             issuer_description: String::default(),
-            issuer_name: String::default()
+            issuer_name: String::default(),
+            total_issued: u128::default()
         }   
     }
 }

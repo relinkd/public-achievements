@@ -2,6 +2,7 @@ type ReputationModuleMetadata = record {
   achievement_canister : principal;
   issuer_name : text;
   issuer_description : text;
+  total_issued : nat;
 };
 type Result = variant { Ok : text; Err : text };
 type Result_1 = variant { Ok : bool; Err : text };
