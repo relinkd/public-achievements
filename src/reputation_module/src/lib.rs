@@ -1,4 +1,5 @@
 pub mod storable;
+pub mod icrc_7;
 
 use candid::{Principal};
 use ic_cdk::{query, update};
@@ -70,8 +71,14 @@ fn is_canister_allowed(canister: Principal) -> Result<CanisterPermission, String
     }
 }
 
-fn issue_achievement() -> Result<(), String> {
-    // your logic to issue achievement
+async fn issue_achievement() -> Result<(), String> {
+    let reputation_metadata = METADATA.with(|m| {
+        let metadata = m.borrow();
+        metadata.get().clone()
+    });
+
+    // let status: (Result<u8, String>, ) = ic_cdk::call(reputation_metadata.achievement_canister, "mintDip721", (caller,)).await.unwrap();
+
     Ok(())
 }
 

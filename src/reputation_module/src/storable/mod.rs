@@ -18,9 +18,9 @@ pub struct CanisterPermission(pub bool);
 
 #[derive(CandidType, Deserialize, Clone)]
 pub struct ReputationModuleMetadata {
-    achievement_canister: Principal,
-    issuer_name: String,
-    issuer_description: String   
+    pub achievement_canister: Principal,
+    pub issuer_name: String,
+    pub issuer_description: String   
 }
 
 impl Storable for CanisterPrincipal {

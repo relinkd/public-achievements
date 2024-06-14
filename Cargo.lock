@@ -41,6 +41,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "349a06037c7bf932dd7e7d1f653678b2038b9ad46a74102f1fc7bd7872678cce"
 
 [[package]]
+name = "base32"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "23ce669cd6c8588f79e15cf450314f9638f967fc5770ff1c7c1deb0925ea7cfa"
+
+[[package]]
 name = "base64ct"
 version = "1.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -369,6 +375,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "icrc-ledger-types"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "804c892bf95652101660a25cea10f059f73eb8973f6b04e0349758fda1190447"
+dependencies = [
+ "base32",
+ "candid",
+ "crc32fast",
+ "hex",
+ "num-bigint",
+ "num-traits",
+ "serde",
+ "serde_bytes",
+ "sha2",
+]
+
+[[package]]
 name = "k256"
 version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -503,10 +526,14 @@ name = "reputation_module"
 version = "0.1.0"
 dependencies = [
  "candid",
+ "crc32fast",
+ "hex",
  "ic-cdk",
  "ic-cdk-macros 0.14.0",
  "ic-stable-structures",
+ "icrc-ledger-types",
  "serde",
+ "sha2",
 ]
 
 [[package]]
