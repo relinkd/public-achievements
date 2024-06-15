@@ -11,10 +11,13 @@ pub const MAX_VALUE_SIZE: u32 = 100;
 pub const MAX_KEY_SIZE: u32 = 100;
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone)]
-pub struct CanisterPrincipal(pub Principal);
+pub struct StorablePrincipal(pub Principal);
 
 #[derive(CandidType, Deserialize, Clone)]
 pub struct CanisterPermission(pub bool);
+
+#[derive(CandidType, Deserialize, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct PrincipalSum(pub String);
 
 #[derive(CandidType, Deserialize, Clone)]
 pub struct ReputationModuleMetadata {
@@ -24,13 +27,28 @@ pub struct ReputationModuleMetadata {
     pub total_issued: u128
 }
 
-impl Storable for CanisterPrincipal {
+impl Storable for StorablePrincipal {
     fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
         self.0.to_bytes()
     }
 
     fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
         Self(Principal::from_bytes(bytes))
+    }
+
+    const BOUND: Bound = Bound::Bounded {
+        max_size: MAX_KEY_SIZE,
+        is_fixed_size: false,
+    };
+}
+
+impl Storable for PrincipalSum {
+    fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
+        self.0.to_bytes()
+    }
+
+    fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
+        Self(String::from_bytes(bytes))
     }
 
     const BOUND: Bound = Bound::Bounded {

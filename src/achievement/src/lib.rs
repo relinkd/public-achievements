@@ -64,7 +64,7 @@ fn update_reputation_canister_metadata(metadata: AchievementMetadata) -> Result<
 }
 
 #[query(name = "getAchievementMetadata")]
-fn get_reputation_module_metadata() -> AchievementMetadata {
+fn get_achievement_metadata() -> AchievementMetadata {
     METADATA.with(|m| {
         let metadata = m.borrow();
         metadata.get().clone()
