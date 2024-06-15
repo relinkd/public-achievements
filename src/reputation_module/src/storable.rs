@@ -27,6 +27,33 @@ pub struct ReputationModuleMetadata {
     pub total_issued: u128
 }
 
+#[derive(CandidType, Deserialize)]
+pub struct Standard {
+    pub name: String,
+    pub url: String,
+}
+
+macro_rules! impl_storable {
+    ($($t:ty),*) => {
+        $(
+            impl Storable for $t {
+                fn to_bytes(&self) -> Cow<[u8]> {
+                    Cow::Owned(Encode!(self).unwrap())
+                }
+
+                fn from_bytes(bytes: Cow<[u8]>) -> Self {
+                    Decode!(bytes.as_ref(), Self).unwrap()
+                }
+
+                const BOUND: Bound = Bound::Bounded {
+                    max_size: MAX_VALUE_SIZE,
+                    is_fixed_size: false,
+                };
+            }
+        )*
+    };
+}
+
 impl Storable for StorablePrincipal {
     fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
         self.0.to_bytes()
@@ -68,20 +95,8 @@ impl ReputationModuleMetadata {
     }
 }
 
-impl Storable for ReputationModuleMetadata {
-    fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
-        Cow::Owned(Encode!(self).unwrap())
-    }
+impl_storable!(ReputationModuleMetadata, Standard);
 
-    fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
-        Decode!(bytes.as_ref(), Self).unwrap()
-    }
-
-    const BOUND: Bound = Bound::Bounded {
-        max_size: MAX_VALUE_SIZE,
-        is_fixed_size: false,
-    };
-}
 impl Storable for CanisterPermission {
     fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
         self.0.to_bytes()

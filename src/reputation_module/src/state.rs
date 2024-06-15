@@ -12,6 +12,7 @@ use crate::access::is_controller;
 use crate::storable::{
     Memory, CanisterPermission, StorablePrincipal, ReputationModuleMetadata, PrincipalSum
 };
+use crate::Standard;
 
 
 thread_local! {
@@ -33,6 +34,12 @@ thread_local! {
     static ACHIEVEMENTS: RefCell<StableVec<StorablePrincipal, Memory>> = RefCell::new(
         StableVec::init(
             MEMORY_MANAGER.with(|a| a.borrow().get(MemoryId::new(1))),
+        ).unwrap()
+    );
+
+    static SUPPORTED_STANDARDS: RefCell<StableVec<Standard, Memory>> = RefCell::new(
+        StableVec::init(
+            MEMORY_MANAGER.with(|a| a.borrow().get(MemoryId::new(4))),
         ).unwrap()
     );
 
@@ -61,6 +68,39 @@ pub fn get_principal_achievement_sum_status(identity_wallet: Principal, achievem
     } else {
         false
     }
+}
+
+#[update(name = "setSupportedStandards")]
+pub fn set_supported_standards(standards: Vec<Standard>) -> Result<(), String> {
+    let id = ic_cdk::api::caller();
+    let is_controller = ic_cdk::api::is_controller(&id);
+
+    if !is_controller {
+        return Err(String::from("Access denied"))
+    }
+
+    SUPPORTED_STANDARDS.with(|p| {
+        let b_p = p.borrow_mut();
+
+        for (_, _) in b_p.iter().enumerate() {
+            b_p.pop();
+        }
+        for (_, e) in standards.iter().enumerate() {
+            b_p.push(e);
+        }
+    });
+    Ok(())
+}
+
+#[query(name = "getSupportedStandards")]
+pub fn get_supported_standards() -> Vec<Standard> {
+    SUPPORTED_STANDARDS.with(|p| {
+        let mut standards: Vec<Standard> = vec![];
+        for (_, e) in p.borrow().iter().enumerate() {
+            standards.push(e)
+        }
+        standards
+    })
 }
 
 #[update(name = "changePermissionCanister")]
