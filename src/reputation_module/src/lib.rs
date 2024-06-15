@@ -1,5 +1,6 @@
 pub mod storable;
 pub mod icrc_7;
+pub mod types;
 
 use candid::{Principal};
 use ic_cdk::{query, update};
@@ -13,6 +14,7 @@ use std::cell::RefCell;
 use storable::{Memory, CanisterPermission, CanisterPrincipal, ReputationModuleMetadata};
 
 use icrc_7::types::{MintArg, MintResult};
+use types::AchievementMetadata;
 
 thread_local! {
     static MEMORY_MANAGER: RefCell<MemoryManager<DefaultMemoryImpl>> =
@@ -74,7 +76,7 @@ fn is_canister_allowed(canister: Principal) -> Result<CanisterPermission, String
     }
 }
 
-async fn issue_achievement(principal: Principal) -> Result<MintResult, String> {
+async fn issue_achievement(principal: Principal, achievement_metadata: AchievementMetadata) -> Result<MintResult, String> {
     let reputation_metadata = METADATA.with(|m| {
         let metadata = m.borrow();
         metadata.get().clone()
@@ -84,9 +86,9 @@ async fn issue_achievement(principal: Principal) -> Result<MintResult, String> {
         from_subaccount: None,
         token_id: reputation_metadata.total_issued + 1,
         token_logo: None,
-        token_name: None,
+        token_name: Some(achievement_metadata.achievement_name),
         memo: None,
-        token_description: Some(String::from("Minted Achievement")),
+        token_description: Some(achievement_metadata.achievement_description),
         to: Account {
             owner: principal,
             subaccount: None
@@ -132,6 +134,13 @@ fn get_reputation_module_metadata() -> ReputationModuleMetadata {
     })
 }
 
+#[query(name = "getAchievementMetadata")]
+async fn get_achievement_metadata(achievement: Principal) -> Result<AchievementMetadata, String> {
+    let achievement_metadata: (AchievementMetadata, ) = ic_cdk::call(achievement, "getReputationModuleMetadata", ()).await.unwrap();
+
+    Ok(achievement_metadata.0)
+}
+
 #[update(name = "issueAchievementToIdentityWallet")]
 async fn issue_achievement_to_identity_wallet(achievement: Principal) -> Result<String, String> {
     let canister_permission = is_canister_allowed(achievement)?;
@@ -142,9 +151,10 @@ async fn issue_achievement_to_identity_wallet(achievement: Principal) -> Result<
 
     let caller = ic_cdk::api::caller();
     let status: (Result<u8, String>, ) = ic_cdk::call(achievement, "getPrincipalToAchievementStatusValue", (caller,)).await.unwrap();
+    let achievement_metadata = get_achievement_metadata(achievement).await.unwrap();
 
     if status.0? == 1_u8 {
-        Ok(format!("{:?}", issue_achievement(caller).await?))
+        Ok(format!("{:?}", issue_achievement(caller, achievement_metadata).await?))
     } else {
         Err(String::from("You`re not allowed"))
     }
