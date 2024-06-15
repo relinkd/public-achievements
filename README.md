@@ -18,6 +18,62 @@ dfx identity list
 
 ---
 
+### Deploy
+
+**deploy public-achievement canisters**
+
+```bash
+dfx start --clean --background
+dfx deploy 
+```
+
+**deploy icrc-7 achievement collection**
+
+[yuki_icrc7](https://github.com/tuminfei/yuku_icrc7)
+Pass reputation_module to minter (owner)
+
+```bash
+dfx deploy icrc7 --argument '(record{                                  
+minting_account= opt record {
+    owner = principal "$(dfx canister id reputation_module)";                                     
+    subaccount = opt blob "\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00";
+  };                  
+icrc7_supply_cap= null;
+icrc7_description= opt "Achievements issued by {your issuer name}";
+tx_window= null;                        
+permitted_drift= null;                  
+icrc7_max_take_value= null;
+icrc7_max_memo_size= null;
+icrc7_symbol= "PAC";
+icrc7_max_update_batch_size= null;
+icrc7_max_query_batch_size= null;
+icrc7_atomic_batch_transfers= null;
+icrc7_default_take_value= null;
+icrc7_logo= null;
+icrc7_name= "Public Achievements"
+})'
+```
+
+**Add metadata to reputation_module**
+
+```bash
+dfx canister call reputation_module updateReputationModuleMetadata "record {achievement_collection=principal \"$(dfx canister id icrc7)\"; issuer_name=\"test\"; issuer_description=\"test\"; total_issued=0}"
+```
+
+**Add metadata to deployed achievement**
+
+```bash
+dfx canister call achievement updateAchivementMetadata '(record {achievement_name="Test achievement"; achievement_description="Description of test achievement"})'
+```
+
+**Add deployed achievement to reputation_module**
+
+```bash
+dfx canister call reputation_module changePermissionCanister "(principal \"$(dfx canister id achievement)\", true)"
+```
+
+---
+
 ### Scenario 1. Get achievement from local_wallet to identity_wallet
 
 ![scenario1](images/scenario1.png)
