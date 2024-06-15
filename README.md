@@ -1,24 +1,16 @@
 # Public Achievements
 
+---
+
 ## Generate candid for canisters
 
 ```bash
 sh generate_candid.sh
 ```
 
-## Achievement flow 
-
-### init identities
-
-```bash
-dfx identity new pa_local_wallet
-dfx identity new pa_identity_wallet
-dfx identity list
-```
-
 ---
 
-### Deploy
+## Deploy
 
 **deploy public-achievement canisters**
 
@@ -29,7 +21,7 @@ dfx deploy
 
 **deploy icrc-7 achievement collection**
 
-[yuki_icrc7](https://github.com/tuminfei/yuku_icrc7)
+[yuku_icrc7](https://github.com/tuminfei/yuku_icrc7)
 Pass reputation_module to minter (owner)
 
 ```bash
@@ -70,6 +62,18 @@ dfx canister call achievement updateAchivementMetadata '(record {achievement_nam
 
 ```bash
 dfx canister call reputation_module changePermissionCanister "(principal \"$(dfx canister id achievement)\", true)"
+```
+
+---
+
+## Achievement flow 
+
+### init identities
+
+```bash
+dfx identity new pa_local_wallet
+dfx identity new pa_identity_wallet
+dfx identity list
 ```
 
 ---
