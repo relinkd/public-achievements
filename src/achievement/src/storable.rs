@@ -71,7 +71,7 @@ impl AchievementStatusEnum {
     }
 }
 
-#[derive(PartialEq, Eq, PartialOrd, Ord, Clone)]
+#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Deserialize, CandidType)]
 pub struct PrincipalStorable(pub Principal);
 
 #[derive(CandidType, Deserialize, Clone)]
@@ -107,7 +107,7 @@ impl Storable for AchievementStatus {
     };
 }
 
-#[derive(CandidType, Serialize, Debug)]
+#[derive(CandidType, Serialize, Debug, Deserialize)]
 pub struct Signature(pub String);
 
 impl Storable for Signature {
