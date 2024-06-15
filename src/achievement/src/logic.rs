@@ -1,15 +1,9 @@
 use ic_cdk::{query, update};
-use candid::{Principal};
-
-use ic_stable_structures::memory_manager::{MemoryId, MemoryManager};
-use ic_stable_structures::{
-    DefaultMemoryImpl, StableBTreeMap, StableVec, StableCell
-};
-use std::cell::RefCell;
+use candid::Principal;
 
 use crate::state::{get_principal_to_hash_value, update_principal_to_hash, update_principal_to_achievement_status};
 use crate::ecdsa::{public_key, build_principals_message, sign, verify};
-use crate::storable::{PrincipalStorable, Signature, AchievementStatusEnum, AchievementStatus};
+use crate::storable::{Signature, AchievementStatusEnum, AchievementStatus};
 
 
 #[query(name = "checkAchievementEligibility")]

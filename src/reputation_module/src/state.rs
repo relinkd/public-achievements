@@ -1,16 +1,18 @@
 use ic_stable_structures::{
     DefaultMemoryImpl, StableBTreeMap, StableVec, StableCell
 };
-use candid::{CandidType, Principal};
+use candid::Principal;
 use ic_cdk::{query, update};
-
 use ic_stable_structures::memory_manager::{MemoryId, MemoryManager};
-use crate::storable::{Memory, CanisterPermission, StorablePrincipal, ReputationModuleMetadata, PrincipalSum};
 use std::cell::RefCell;
 
 use crate::utils::build_principal_sum;
 use crate::types::AchievementMetadata;
 use crate::access::is_controller;
+use crate::storable::{
+    Memory, CanisterPermission, StorablePrincipal, ReputationModuleMetadata, PrincipalSum
+};
+
 
 thread_local! {
     static MEMORY_MANAGER: RefCell<MemoryManager<DefaultMemoryImpl>> =

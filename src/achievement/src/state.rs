@@ -1,15 +1,14 @@
-
 use ic_cdk::{query, update};
-use candid::{Principal};
-
+use candid::Principal;
 use ic_stable_structures::memory_manager::{MemoryId, MemoryManager};
 use ic_stable_structures::{
-    DefaultMemoryImpl, StableBTreeMap, StableVec, StableCell
+    DefaultMemoryImpl, StableBTreeMap, StableCell
 };
 use std::cell::RefCell;
 
-use crate::storable::{PrincipalStorable, AchievementStatus, Memory, Signature, AchievementStatusEnum, AchievementMetadata};
-use crate::ecdsa::{sign, public_key, verify, build_principals_message};
+use crate::storable::{
+    PrincipalStorable, AchievementStatus, Memory, Signature, AchievementMetadata
+};
 use crate::access::is_controller;
 
 

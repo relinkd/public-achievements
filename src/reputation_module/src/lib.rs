@@ -9,7 +9,7 @@ pub mod utils;
 pub mod access;
 pub mod logic;
 
-use crate::types::*;
-use crate::storable::*;
+use types::*;
+use storable::*;
 
 export_candid!();
