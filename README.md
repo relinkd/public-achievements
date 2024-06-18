@@ -98,6 +98,7 @@ stateDiagram
     C1 --> D1 : 5. call issueAchievementToIdentityWallet
     D1 --> C1 : 6. issue achievement
 
+```mermaid
 
 ![scenario1](images/scenario1.png)
 
