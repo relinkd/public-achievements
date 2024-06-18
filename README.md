@@ -79,6 +79,28 @@ dfx identity list
 ---
 
 ### Scenario 1. Get achievement from local_wallet to identity_wallet
+---
+title: Scenario 1. From local wallet to identity wallet
+---
+
+%%{init: {'theme':'neutral'}}%%
+
+
+stateDiagram
+
+    state "Local Principal (connected to dapp)" as A1 
+    state "Reputation Module" as D1
+    state "Identity Wallet (connected to HUB)" as C1
+    state "Achievement" as B1
+    
+
+    A1 --> B1 : 1. Call method generateHashToIdentityWallet
+    B1 --> C1 : 2. Generate hach to identity Wallet
+    C1 --> B1 : 3. call receiveAchievementFromIdentityWalletWithHash
+    B1 --> C1 : 4. change achievement status to Allowed
+    C1 --> D1 : 5. call issueAchievementToIdentityWallet
+    D1 --> C1 : 6. issue achievement
+
 
 ![scenario1](images/scenario1.png)
 
