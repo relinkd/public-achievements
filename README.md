@@ -79,12 +79,10 @@ dfx identity list
 ---
 
 ### Scenario 1. Get achievement from local_wallet to identity_wallet
+
 ---
 title: Scenario 1. From local wallet to identity wallet
 ---
-
-%%{init: {'theme':'neutral'}}%%
-
 
 stateDiagram
 
