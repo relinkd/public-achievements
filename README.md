@@ -82,6 +82,8 @@ dfx identity list
 
 ```mermaid
 
+
+
 %%{init: {'theme':'neutral'}}%%
 stateDiagram
 
@@ -98,9 +100,10 @@ stateDiagram
     C1 --> D1 : 5. call issueAchievementToIdentityWallet
     D1 --> C1 : 6. issue achievement
 
-```
 
-![scenario1](images/scenario1.png)
+
+
+```
 
 **Generate hash to identity wallet**
 
@@ -140,7 +143,29 @@ dfx --identity pa_identity_wallet canister call reputation_module issueAchieveme
 
 ### Scenario 2. Receive achievement directly from identity_wallet
 
-![scenario2](images/scenario2.png)
+```mermaid
+
+
+
+%%{init: {'theme':'neutral'}}%%
+
+
+stateDiagram
+        
+    state "Achievement" as B1
+    state "Identity Wallet (connected to HUB)" as C1 
+    state "Reputation Module" as D1   
+    
+    
+    C1 --> B1 : 1. call receiveAchievementFromIdentityWallet
+    B1 --> C1 : 2. change achievement status to Allowed
+    C1 --> D1 : 3. call issueAchievementToIdentityWallet
+    D1 --> C1 : 4. issue achievement
+
+
+
+
+```
 
 Suitable for people who do not use Internet Identity but use wallets such as Plug and use one address in all applications.
 
