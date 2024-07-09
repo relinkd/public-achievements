@@ -197,4 +197,3 @@ dfx --identity pa_identity_wallet canister call reputation_module issueAchieveme
 
 Blob - accepts additional parameters encoded in bytes, for example, an additional Metamask signature. If the function does not use this argument, an empty byte array is passed.
 
-.
