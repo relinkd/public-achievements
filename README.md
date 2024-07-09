@@ -1,5 +1,9 @@
-# Public Achievements
 
+
+
+# User Public Achievements Standard
+
+![User Public Achievement Logo](https://github.com/relinkd/public-achievements/blob/main/images/UPAS_Logo_lite.png)
 ---
 
 ## Generate candid for canisters
