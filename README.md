@@ -88,15 +88,24 @@ dfx identity list
 
 
 
-%%{init: {'theme':'neutral'}}%%
-stateDiagram
-
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#ffffff',
+    'primaryBorderColor': '#8A2BDD',
+    'lineColor': '#8A2BDD',
+    'textColor': '#333',
+    'primaryBorderWidth': '6px',
+    'edgeLabelBackground': '#ffffff',
+    'arrowheadColor': '#8A2BDD'
+  }
+}}%%
+stateDiagram-v2
     state "Local Principal (connected to dapp)" as A1 
     state "Reputation Module" as D1
     state "Identity Wallet (connected to HUB)" as C1
     state "Achievement" as B1
     
-
     A1 --> B1 : 1. Call method generateHashToIdentityWallet
     B1 --> C1 : 2. Generate hach to identity Wallet
     C1 --> B1 : 3. call receiveAchievementFromIdentityWalletWithHash
@@ -151,10 +160,19 @@ dfx --identity pa_identity_wallet canister call reputation_module issueAchieveme
 
 
 
-%%{init: {'theme':'neutral'}}%%
-
-
-stateDiagram
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#ffffff',
+    'primaryBorderColor': '#8A2BDD',
+    'lineColor': '#8A2BDD',
+    'textColor': '#333',
+    'primaryBorderWidth': '6px',
+    'edgeLabelBackground': '#ffffff',
+    'arrowheadColor': '#8A2BDD'
+  }
+}}%%
+stateDiagram-v2
         
     state "Achievement" as B1
     state "Identity Wallet (connected to HUB)" as C1 
