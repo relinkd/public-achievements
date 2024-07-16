@@ -91,12 +91,11 @@ dfx identity list
 %%{init: {
   'theme': 'base',
   'themeVariables': {
-    'primaryColor': '#ffffff',
+    'primaryColor': '#EEF9FC',
+    'darkMode': false,    
     'primaryBorderColor': '#8A2BDD',
     'lineColor': '#8A2BDD',
-    'textColor': '#333',
-    'primaryBorderWidth': '6px',
-    'edgeLabelBackground': '#ffffff',
+    'textColor': 'black',
     'arrowheadColor': '#8A2BDD'
   }
 }}%%
