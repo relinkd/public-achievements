@@ -56,9 +56,11 @@ async fn issue_achievement_to_identity_wallet(achievement: Principal) -> Result<
 
     if status_result == 1_u8 {
         let result = issue_achievement(caller, achievement_metadata).await.unwrap();
-        _change_principal_achievement_sum_status_to_issued(caller, achievement)?;
         match result {
-            Ok(n) => return Ok(n),
+            Ok(n) => {
+                _change_principal_achievement_sum_status_to_issued(caller, achievement)?;
+                return Ok(n)
+            },
             Err(_) => return Err(String::from("Mint Error"))
         }
     } else {
