@@ -32,11 +32,11 @@ async fn issue_achievement(principal: Principal, achievement_metadata: Achieveme
 
     increment_total_issued()?;
 
-    Ok(mint_result.0)
+    Ok(mint_result.0)   
 }
 
 #[update(name = "issueAchievementToIdentityWallet")]
-async fn issue_achievement_to_identity_wallet(achievement: Principal) -> Result<String, String> {
+async fn issue_achievement_to_identity_wallet(achievement: Principal) -> Result<u128, String> {
     let canister_permission = is_canister_allowed(achievement)?;
 
     if !canister_permission.0 {
@@ -45,6 +45,7 @@ async fn issue_achievement_to_identity_wallet(achievement: Principal) -> Result<
 
     let caller = ic_cdk::api::caller();
     let status: (Result<u8, String>, ) = ic_cdk::call(achievement, "getPrincipalToAchievementStatusValue", (caller,)).await.unwrap();
+    let status_result = status.0.unwrap();
     let achievement_metadata = get_achievement_metadata(achievement).await.unwrap();
 
     let issued_status = get_principal_achievement_sum_status(caller, achievement);
@@ -53,10 +54,13 @@ async fn issue_achievement_to_identity_wallet(achievement: Principal) -> Result<
         return Err(String::from("Achievement already issued"));
     }
 
-    if status.0? == 1_u8 {
-        let issue_result = format!("{:?}", issue_achievement(caller, achievement_metadata).await?);
+    if status_result == 1_u8 {
+        let result = issue_achievement(caller, achievement_metadata).await.unwrap();
         _change_principal_achievement_sum_status_to_issued(caller, achievement)?;
-        Ok(issue_result)
+        match result {
+            Ok(n) => return Ok(n),
+            Err(_) => return Err(String::from("Mint Error"))
+        }
     } else {
         Err(String::from("You`re not allowed"))
     }
