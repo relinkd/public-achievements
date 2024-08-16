@@ -1,0 +1,3 @@
+dfx canister call reputation_module updateReputationModuleMetadata "record {achievement_collection=principal \"$(dfx canister id icrc7)\"; issuer_name=\"{r}elinkd issuer\"; issuer_description=\"relinkd test issue\"; total_issued=0}"
+dfx canister call achievement updateAchivementMetadata '(record {achievement_name="Early UPAS adopter"; achievement_description="Early adopter achievement of UPAS protocol"})'
+dfx canister call reputation_module changePermissionCanister "(principal \"$(dfx canister id achievement)\", true)"
