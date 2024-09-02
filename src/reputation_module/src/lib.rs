@@ -1,3 +1,5 @@
+#![doc = include_str!("../README.md")]
+
 use ic_cdk_macros::export_candid;
 use candid::Principal;
 

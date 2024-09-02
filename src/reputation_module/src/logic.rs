@@ -1,3 +1,5 @@
+//! This module contains the logic for issuing achievements and managing reputation.
+
 use candid::Principal;
 use icrc_ledger_types::icrc1::account::Account;
 use ic_cdk::update;
@@ -13,7 +15,18 @@ use crate::state::{
     _change_principal_achievement_sum_status_to_issued
 };
 
-
+/// Issues an achievement to a principal.
+///
+/// This function mints a new achievement token and assigns it to the specified principal.
+///
+/// # Arguments
+///
+/// * `principal` - The principal to whom the achievement will be issued.
+/// * `achievement_metadata` - Metadata of the achievement to be issued.
+///
+/// # Returns
+///
+/// * `Result<MintResult, String>` - The result of the minting operation.
 async fn issue_achievement(principal: Principal, achievement_metadata: AchievementMetadata) -> Result<MintResult, String> {
     let reputation_metadata = get_reputation_module_metadata();
 
@@ -35,6 +48,18 @@ async fn issue_achievement(principal: Principal, achievement_metadata: Achieveme
     Ok(mint_result.0)   
 }
 
+/// Issues an achievement to the caller's identity wallet.
+///
+/// This function checks if the achievement is allowed and if it has not been issued already,
+/// then issues the achievement to the caller's identity wallet.
+///
+/// # Arguments
+///
+/// * `achievement` - The principal of the achievement canister.
+///
+/// # Returns
+///
+/// * `Result<u128, String>` - The result of the issuance operation.
 #[update(name = "issueAchievementToIdentityWallet")]
 async fn issue_achievement_to_identity_wallet(achievement: Principal) -> Result<u128, String> {
     let canister_permission = is_canister_allowed(achievement)?;

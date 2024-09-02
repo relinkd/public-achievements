@@ -1,18 +1,23 @@
+//! This module provides ECDSA-related functionality, including public key retrieval, signing, and signature verification.
+
 use candid::{CandidType, Principal};
 use serde::{Deserialize, Serialize};
 use std::convert::TryFrom;
 use std::str::FromStr;
 
+/// Response containing the public key in hexadecimal format.
 #[derive(CandidType, Serialize, Debug)]
 pub struct PublicKeyReply {
     pub public_key_hex: String,
 }
 
+/// Response containing the signature in hexadecimal format.
 #[derive(CandidType, Serialize, Debug, Clone)]
 pub struct SignatureReply {
     pub signature_hex: String,
 }
 
+/// Response indicating whether a signature is valid.
 #[derive(CandidType, Serialize, Debug)]
 pub struct SignatureVerificationReply {
     pub is_signature_valid: bool,
@@ -57,6 +62,16 @@ enum EcdsaCurve {
     Secp256k1,
 }
 
+/// Builds a message string from the caller and identity wallet principals.
+///
+/// # Arguments
+///
+/// * `caller` - The principal of the caller.
+/// * `identity_wallet` - The principal of the identity wallet.
+///
+/// # Returns
+///
+/// * `String` - The concatenated message string.
 pub fn build_principals_message(caller: Principal, identity_wallet: Principal) -> String {
     let mut message = String::from("");
     message.push_str(&caller.to_string());
@@ -65,6 +80,11 @@ pub fn build_principals_message(caller: Principal, identity_wallet: Principal) -
     message
 }
 
+/// Retrieves the public key for ECDSA.
+///
+/// # Returns
+///
+/// * `Result<PublicKeyReply, String>` - The public key in hexadecimal format.
 pub async fn public_key() -> Result<PublicKeyReply, String> {
     let request = ECDSAPublicKey {
         canister_id: None,
@@ -82,6 +102,15 @@ pub async fn public_key() -> Result<PublicKeyReply, String> {
     })
 }
 
+/// Signs a message using ECDSA.
+///
+/// # Arguments
+///
+/// * `message` - The message to be signed.
+///
+/// # Returns
+///
+/// * `Result<SignatureReply, String>` - The signature in hexadecimal format.
 pub async fn sign(message: String) -> Result<SignatureReply, String> {
     let request = SignWithECDSA {
         message_hash: sha256(&message).to_vec(),
@@ -103,6 +132,17 @@ pub async fn sign(message: String) -> Result<SignatureReply, String> {
     })
 }
 
+/// Verifies a signature using ECDSA.
+///
+/// # Arguments
+///
+/// * `signature_hex` - The signature in hexadecimal format.
+/// * `message` - The message that was signed.
+/// * `public_key_hex` - The public key in hexadecimal format.
+///
+/// # Returns
+///
+/// * `Result<SignatureVerificationReply, String>` - The result of the verification.
 pub async fn verify(
     signature_hex: String,
     message: String,

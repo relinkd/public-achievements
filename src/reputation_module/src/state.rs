@@ -1,3 +1,5 @@
+//! This module manages the state of the reputation module, including metadata, achievements, and permissions.
+
 use ic_stable_structures::{
     DefaultMemoryImpl, StableBTreeMap, StableVec, StableCell
 };
@@ -13,7 +15,6 @@ use crate::storable::{
     Memory, CanisterPermission, StorablePrincipal, ReputationModuleMetadata, PrincipalSum
 };
 use crate::Standard;
-
 
 thread_local! {
     static MEMORY_MANAGER: RefCell<MemoryManager<DefaultMemoryImpl>> =
@@ -51,6 +52,18 @@ thread_local! {
 
 }
 
+/// Changes the status of a principal's achievement to issued.
+///
+/// This function updates the status of a principal's achievement to indicate that it has been issued.
+///
+/// # Arguments
+///
+/// * `identity_wallet` - The principal of the identity wallet.
+/// * `achievement` - The principal of the achievement canister.
+///
+/// # Returns
+///
+/// * `Result<(), String>` - The result of the update operation.
 pub fn _change_principal_achievement_sum_status_to_issued(identity_wallet: Principal, achievement: Principal) -> Result<(), String> {
     let principal_sum = build_principal_sum(identity_wallet, achievement);
 
@@ -59,6 +72,18 @@ pub fn _change_principal_achievement_sum_status_to_issued(identity_wallet: Princ
     Ok(())
 }
 
+/// Retrieves the status of a principal's achievement.
+///
+/// This function checks if a principal's achievement has been issued.
+///
+/// # Arguments
+///
+/// * `identity_wallet` - The principal of the identity wallet.
+/// * `achievement` - The principal of the achievement canister.
+///
+/// # Returns
+///
+/// * `bool` - `true` if the achievement has been issued, `false` otherwise.
 #[query(name = "getPrincipalAchievementSumStatus")]
 pub fn get_principal_achievement_sum_status(identity_wallet: Principal, achievement: Principal) -> bool {
     let principal_sum = build_principal_sum(identity_wallet, achievement);
@@ -70,6 +95,17 @@ pub fn get_principal_achievement_sum_status(identity_wallet: Principal, achievem
     }
 }
 
+/// Sets the supported standards for the reputation module.
+///
+/// This function updates the list of supported standards for the reputation module.
+///
+/// # Arguments
+///
+/// * `standards` - A vector of supported standards.
+///
+/// # Returns
+///
+/// * `Result<(), String>` - The result of the update operation.
 #[update(name = "setSupportedStandards")]
 pub fn set_supported_standards(standards: Vec<Standard>) -> Result<(), String> {
     let id = ic_cdk::api::caller();
@@ -92,6 +128,13 @@ pub fn set_supported_standards(standards: Vec<Standard>) -> Result<(), String> {
     Ok(())
 }
 
+/// Retrieves the supported standards for the reputation module.
+///
+/// This function returns the list of supported standards for the reputation module.
+///
+/// # Returns
+///
+/// * `Vec<Standard>` - A vector of supported standards.
 #[query(name = "getSupportedStandards")]
 pub fn get_supported_standards() -> Vec<Standard> {
     SUPPORTED_STANDARDS.with(|p| {
@@ -103,6 +146,18 @@ pub fn get_supported_standards() -> Vec<Standard> {
     })
 }
 
+/// Changes the permission of a canister.
+///
+/// This function updates the permission of a specified canister.
+///
+/// # Arguments
+///
+/// * `canister` - The principal of the canister.
+/// * `permission` - The new permission status.
+///
+/// # Returns
+///
+/// * `Result<String, String>` - The result of the update operation.
 #[update(name = "changePermissionCanister")]
 pub fn change_permission_canister(canister: Principal, permission: bool) -> Result<String, String> {
     let id = ic_cdk::api::caller();
@@ -116,6 +171,17 @@ pub fn change_permission_canister(canister: Principal, permission: bool) -> Resu
     }
 }
 
+/// Checks if a canister is allowed.
+///
+/// This function checks if a specified canister has the required permissions.
+///
+/// # Arguments
+///
+/// * `canister` - The principal of the canister.
+///
+/// # Returns
+///
+/// * `Result<CanisterPermission, String>` - The permission status of the canister.
 #[query(name = "isCanisterAllowed")]
 pub fn is_canister_allowed(canister: Principal) -> Result<CanisterPermission, String> {
     if let Some(permission) = ACHIEVEMENT_CANISTER_TO_BOOL.with(|p| p.borrow().get(&StorablePrincipal(canister))) {
@@ -125,6 +191,13 @@ pub fn is_canister_allowed(canister: Principal) -> Result<CanisterPermission, St
     }
 }
 
+/// Increments the total number of issued achievements.
+///
+/// This function increments the total count of issued achievements in the reputation module.
+///
+/// # Returns
+///
+/// * `Result<(), String>` - The result of the increment operation.
 pub fn increment_total_issued() -> Result<(), String> {
     let mut reputation_module_metadata = get_reputation_module_metadata();
     reputation_module_metadata.total_issued += 1;
@@ -134,6 +207,17 @@ pub fn increment_total_issued() -> Result<(), String> {
     Ok(())
 }
 
+/// Updates the metadata of the reputation module.
+///
+/// This function updates the metadata of the reputation module with the provided metadata.
+///
+/// # Arguments
+///
+/// * `metadata` - The new metadata for the reputation module.
+///
+/// # Returns
+///
+/// * `Result<ReputationModuleMetadata, String>` - The result of the update operation.
 pub fn _update_canister_metadata(metadata: ReputationModuleMetadata) -> Result<ReputationModuleMetadata, String> {
     Ok(METADATA.with(|m| {
         let mut metadata_module = m.borrow_mut();
@@ -143,6 +227,17 @@ pub fn _update_canister_metadata(metadata: ReputationModuleMetadata) -> Result<R
     }))
 }
 
+/// Updates the metadata of the reputation module.
+///
+/// This function updates the metadata of the reputation module with the provided metadata.
+///
+/// # Arguments
+///
+/// * `metadata` - The new metadata for the reputation module.
+///
+/// # Returns
+///
+/// * `Result<ReputationModuleMetadata, String>` - The result of the update operation.
 #[update(name = "updateReputationModuleMetadata")]
 pub fn update_reputation_canister_metadata(metadata: ReputationModuleMetadata) -> Result<ReputationModuleMetadata, String> {
     if(!is_controller()) {
@@ -151,6 +246,13 @@ pub fn update_reputation_canister_metadata(metadata: ReputationModuleMetadata) -
     _update_canister_metadata(metadata)
 }
 
+/// Retrieves the metadata of the reputation module.
+///
+/// This function returns the current metadata of the reputation module.
+///
+/// # Returns
+///
+/// * `ReputationModuleMetadata` - The current metadata of the reputation module.
 #[query(name = "getReputationModuleMetadata")]
 pub fn get_reputation_module_metadata() -> ReputationModuleMetadata {
     METADATA.with(|m| {
@@ -159,6 +261,17 @@ pub fn get_reputation_module_metadata() -> ReputationModuleMetadata {
     })
 }
 
+/// Retrieves the metadata of an achievement.
+///
+/// This function returns the metadata of a specified achievement.
+///
+/// # Arguments
+///
+/// * `achievement` - The principal of the achievement canister.
+///
+/// # Returns
+///
+/// * `Result<AchievementMetadata, String>` - The metadata of the achievement.
 #[query(name = "getAchievementMetadata")]
 pub async fn get_achievement_metadata(achievement: Principal) -> Result<AchievementMetadata, String> {
     let achievement_metadata: (AchievementMetadata, ) = ic_cdk::call(achievement, "getAchievementMetadata", ()).await.unwrap();

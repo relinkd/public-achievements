@@ -1,3 +1,5 @@
+#![doc = include_str!("../README.md")]
+
 pub mod ecdsa;
 pub mod storable;
 pub mod access;

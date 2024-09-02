@@ -1,3 +1,5 @@
+//! This module defines storable types and their implementations for use with stable structures.
+
 use candid::{Principal, CandidType, Deserialize, Encode, Decode};
 use ic_stable_structures::memory_manager::VirtualMemory;
 use ic_stable_structures::{
@@ -10,15 +12,19 @@ pub type Memory = VirtualMemory<DefaultMemoryImpl>;
 pub const MAX_VALUE_SIZE: u32 = 100;
 pub const MAX_KEY_SIZE: u32 = 100;
 
+/// A wrapper for `Principal` to make it storable.
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone)]
 pub struct StorablePrincipal(pub Principal);
 
+/// Represents the permission status of a canister.
 #[derive(CandidType, Deserialize, Clone)]
 pub struct CanisterPermission(pub bool);
 
+/// Represents a sum of principal and achievement.
 #[derive(CandidType, Deserialize, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct PrincipalSum(pub String);
 
+/// Metadata for the reputation module.
 #[derive(CandidType, Deserialize, Clone)]
 pub struct ReputationModuleMetadata {
     pub achievement_collection: Principal,
@@ -27,6 +33,7 @@ pub struct ReputationModuleMetadata {
     pub total_issued: u128
 }
 
+/// Represents a standard supported by the reputation module.
 #[derive(CandidType, Deserialize)]
 pub struct Standard {
     pub name: String,
@@ -85,6 +92,7 @@ impl Storable for PrincipalSum {
 }
 
 impl ReputationModuleMetadata {
+    /// Creates a default instance of `ReputationModuleMetadata`.
     pub fn default() -> Self {
         Self {
             achievement_collection: Principal::anonymous(),
