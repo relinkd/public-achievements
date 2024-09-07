@@ -60,6 +60,14 @@ async fn issue_achievement(principal: Principal, achievement_metadata: Achieveme
 /// # Returns
 ///
 /// * `Result<u128, String>` - The result of the issuance operation.
+///
+/// # Example
+///
+/// ```bash
+/// dfx --identity pa_identity_wallet canister call reputation_module issueAchievementToIdentityWallet "(principal \"$(dfx canister id achievement)\")"
+///
+/// (variant { Ok = "Achievement issued" })
+/// ```
 #[update(name = "issueAchievementToIdentityWallet")]
 async fn issue_achievement_to_identity_wallet(achievement: Principal) -> Result<u128, String> {
     let canister_permission = is_canister_allowed(achievement)?;
