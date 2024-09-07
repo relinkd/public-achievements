@@ -8,7 +8,7 @@ type Result_2 = variant { Ok : nat8; Err : text };
 type Result_3 = variant { Ok : AchievementMetadata; Err : text };
 service : {
   caller : () -> (principal) query;
-  checkAchievementEligibility : (principal, blob) -> (Result) query;
+  checkAchievementEligibility : (principal, blob) -> (Result);
   generateHashToIdentityWallet : (principal, blob) -> (Result_1);
   getAchievementMetadata : () -> (AchievementMetadata) query;
   getPrincipalToAchievementStatusValue : (principal) -> (Result_2) query;

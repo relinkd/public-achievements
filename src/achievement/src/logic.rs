@@ -17,7 +17,7 @@ use crate::storable::{Signature, AchievementStatusEnum, AchievementStatus};
 /// # Returns
 ///
 /// * `Result<bool, String>` - `true` if the principal is eligible, `false` otherwise.
-#[query(name = "checkAchievementEligibility")]
+#[update(name = "checkAchievementEligibility")]
 fn check_achievement_eligibility(principal: Principal, blob: Vec<u8>) -> Result<bool, String> {
 
     // Your conditions for achievement
