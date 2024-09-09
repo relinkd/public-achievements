@@ -31,11 +31,16 @@ use crate::storable::{Signature, AchievementStatusEnum, AchievementStatus};
 ///     })
 /// ```
 #[update(name = "checkAchievementEligibility")]
-fn check_achievement_eligibility(principal: Principal, blob: Vec<u8>) -> Result<bool, String> {
+async fn check_achievement_eligibility(principal: Principal, blob: Vec<u8>) -> Result<bool, String> {
 
     // Your conditions for achievement
+    // Example of calling another canister
 
-    Ok(true)
+    let example_backend_canister_id = Principal::from_text("aax3a-h4aaa-aaaaa-qaahq-cai").unwrap();
+
+    let is_posted: (bool, ) = ic_cdk::call(example_backend_canister_id, "getPrincipalToIsPosted", (principal,)).await.unwrap();
+
+    Ok(is_posted.0)
 }
 
 /// Generates a hash for the caller's identity wallet.
@@ -74,7 +79,7 @@ fn check_achievement_eligibility(principal: Principal, blob: Vec<u8>) -> Result<
 #[update(name = "generateHashToIdentityWallet")]
 async fn generate_hash_to_identity_wallet(identity_wallet: Principal, blob: Vec<u8>) -> Result<String, String> {
     let caller = ic_cdk::api::caller();
-    let eligibility = check_achievement_eligibility(caller, blob).unwrap();
+    let eligibility = check_achievement_eligibility(caller, blob).await.unwrap();
 
     if eligibility {
         let message = build_principals_message(caller, identity_wallet);
@@ -108,7 +113,7 @@ async fn generate_hash_to_identity_wallet(identity_wallet: Principal, blob: Vec<
 #[update(name = "receiveAchievementFromIdentityWallet")]
 async fn receive_achievement_from_identity_wallet(blob: Vec<u8>) -> Result<String, String> {
     let caller = ic_cdk::api::caller();
-    let eligibility = check_achievement_eligibility(caller, blob).unwrap();
+    let eligibility = check_achievement_eligibility(caller, blob).await.unwrap();
 
     if eligibility {
         let allowed_status = AchievementStatusEnum::Allowed;
