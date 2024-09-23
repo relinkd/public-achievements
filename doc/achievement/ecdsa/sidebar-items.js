@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["always_fail","build_principals_message","public_key","sign","verify"],"struct":["PublicKeyReply","SignatureReply","SignatureVerificationReply"],"type":["CanisterId"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["TransactionType"],"struct":["Approval","ApprovalArg","BurnArg","InitArg","MintArg","Standard","Transaction","TransferArg"],"type":["ApproveResult","BurnResult","Icrc7TokenMetadata","MintResult","SyncReceipt","TransferResult"]};

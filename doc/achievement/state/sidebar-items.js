@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["MEMORY_MANAGER","METADATA","PRINCIPAL_TO_ACHIEVEMENT_STATUS","PRINCIPAL_TO_HASH"],"fn":["_update_canister_metadata","get_achievement_metadata","get_principal_to_achievement_status_value","get_principal_to_hash_value","update_achievement_metadata","update_principal_to_achievement_status","update_principal_to_hash"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["_change_principal_achievement_sum_status_to_issued","_update_canister_metadata","change_permission_canister","get_achievement_metadata","get_principal_achievement_sum_status","get_reputation_module_metadata","get_supported_standards","increment_total_issued","is_canister_allowed","set_supported_standards","update_reputation_canister_metadata"]};
