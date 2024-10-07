@@ -89,18 +89,13 @@ dfx identity list
 
 
 stateDiagram-v2
-    [*] --> A1
-    state A1 as "Local Principal\n(connected to dapp)"
-    state B1 as "Achievement"
-    state C1 as "Identity Wallet\n(connected to HUB)"
-    state D1 as "Reputation Module"
-    
-    A1 --> B1 : Call method\n"generateHashToIdentityWallet"
-    B1 --> C1 : Generate hash\nto identity Wallet
-    C1 --> B1 : Call receive\n"AchievementFromIdentityWalletWithHash"
-    B1 --> C1 : Change achievement\nstatus to "Allowed"
-    C1 --> D1 : Call issue\n"AchievementToIdentityWallet"
-    D1 --> C1 : Issue achievement
+    [*] --> "Local Principal (connected to dapp)"
+    "Local Principal (connected to dapp)" --> "Achievement" : Call method generateHashToIdentityWallet
+    "Achievement" --> "Identity Wallet (connected to HUB)" : Generate hash to identity Wallet
+    "Identity Wallet (connected to HUB)" --> "Achievement" : Call receiveAchievementFromIdentityWalletWithHash
+    "Achievement" --> "Identity Wallet (connected to HUB)" : Change achievement status to Allowed
+    "Identity Wallet (connected to HUB)" --> "Reputation Module" : Call issueAchievementToIdentityWallet
+    "Reputation Module" --> "Identity Wallet (connected to HUB)" : Issue achievement
 
 
 
