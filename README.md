@@ -88,17 +88,6 @@ dfx identity list
 
 
 
-%%{init: {
-  'theme': 'base',
-  'themeVariables': {
-    'primaryColor': '#EEF9FC',
-    'darkMode': false,    
-    'primaryBorderColor': '#8A2BDD',
-    'lineColor': '#8A2BDD',
-    'textColor': 'black',
-    'arrowheadColor': '#8A2BDD'
-  }
-}}%%
 stateDiagram-v2
     state "Local Principal (connected to dapp)" as A1 
     state "Reputation Module" as D1
@@ -106,7 +95,7 @@ stateDiagram-v2
     state "Achievement" as B1
     
     A1 --> B1 : 1. Call method generateHashToIdentityWallet
-    B1 --> C1 : 2. Generate hach to identity Wallet
+    B1 --> C1 : 2. Generate hash to identity Wallet
     C1 --> B1 : 3. call receiveAchievementFromIdentityWalletWithHash
     B1 --> C1 : 4. change achievement status to Allowed
     C1 --> D1 : 5. call issueAchievementToIdentityWallet
