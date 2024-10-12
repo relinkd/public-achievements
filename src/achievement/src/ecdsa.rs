@@ -89,7 +89,7 @@ pub async fn public_key() -> Result<PublicKeyReply, String> {
     let request = ECDSAPublicKey {
         canister_id: None,
         derivation_path: vec![],
-        key_id: EcdsaKeyIds::TestKeyLocalDevelopment.to_key_id(),
+        key_id: EcdsaKeyIds::ProductionKey1.to_key_id(),
     };
 
     let (res,): (ECDSAPublicKeyReply,) =
@@ -115,14 +115,14 @@ pub async fn sign(message: String) -> Result<SignatureReply, String> {
     let request = SignWithECDSA {
         message_hash: sha256(&message).to_vec(),
         derivation_path: vec![],
-        key_id: EcdsaKeyIds::TestKeyLocalDevelopment.to_key_id(),
+        key_id: EcdsaKeyIds::ProductionKey1.to_key_id(),
     };
 
     let (response,): (SignWithECDSAReply,) = ic_cdk::api::call::call_with_payment(
         mgmt_canister_id(),
         "sign_with_ecdsa",
         (request,),
-        25_000_000_000,
+        30_000_000_000,
     )
     .await
     .map_err(|e| format!("sign_with_ecdsa failed {}", e.1))?;

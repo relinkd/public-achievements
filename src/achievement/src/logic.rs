@@ -36,7 +36,7 @@ async fn check_achievement_eligibility(principal: Principal, blob: Vec<u8>) -> R
     // Your conditions for achievement
     // Example of calling another canister
 
-    let example_backend_canister_id = Principal::from_text("yb7fs-4qaaa-aaaal-qmzna-cai").unwrap();
+    let example_backend_canister_id = Principal::from_text("4esxg-gyaaa-aaaaj-qnclq-cai").unwrap();
 
     let is_posted: (bool, ) = ic_cdk::call(example_backend_canister_id, "getPrincipalToIsPosted", (principal,)).await.unwrap();
 
